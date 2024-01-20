@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:madcamp_week4/screens/login.dart';
+import 'package:madcamp_week4/screens/login/login.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
 
 class SplashView extends StatelessWidget{
@@ -11,7 +11,7 @@ class SplashView extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     Timer(const Duration(seconds: 2), (){
-      Get.to(LoginView());
+      Get.to(() => LoginView());
     });
     return Scaffold(
       backgroundColor: GlobalColors.mainColor,

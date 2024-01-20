@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:madcamp_week4/utils/global_colors.dart';
 import 'package:madcamp_week4/widgets/global_button.dart';
-import 'package:madcamp_week4/widgets/global_text_form.dart';
+import '../../utils/global_colors.dart';
+import '../../widgets/global_text_form.dart';
 
-class LoginView extends StatelessWidget{
-  LoginView({Key? key}) : super(key: key);
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class Signup extends StatelessWidget{
+  Signup({Key? key}) : super(key: key);
+
+  final TextEditingController newEmailController = TextEditingController();
+  final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController newNameController = TextEditingController();
+
+  String get emailText => newEmailController.text;
+  String get passwordText => newPasswordController.text;
+  String get nameText => newNameController.text;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +39,7 @@ class LoginView extends StatelessWidget{
                 ),
                 const SizedBox(height: 30),
                 Text(
-                    'Login to your account',
+                  'Create new account',
                   style: TextStyle(
                     color: GlobalColors.textColor,
                     fontSize: 16,
@@ -43,42 +49,35 @@ class LoginView extends StatelessWidget{
                 const SizedBox(height: 15),
                 // Email input
                 GlobalTextForm(
-                    controller: emailController,
-                    text: 'Email',
-                    obscure: false,
+                  controller: newEmailController,
+                  text: 'Email',
+                  obscure: false,
                   textInputType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 10,),
                 // Password input
                 GlobalTextForm(
-                    controller: passwordController,
-                    text: 'Password',
-                    textInputType: TextInputType.text,
-                    obscure: true,
+                  controller: newPasswordController,
+                  text: 'Password',
+                  textInputType: TextInputType.text,
+                  obscure: false,
                 ),
-                const SizedBox(height: 10,),
-                const LoginButton(),
-                const SizedBox(height: 10,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Don\'t have an account?',
-                      style: TextStyle(
-                        color: GlobalColors.textColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    const SignupButton(),
-                  ],
+                const SizedBox(height: 10),
+                // Name input
+                GlobalTextForm(
+                  controller: newNameController,
+                  text: 'Name',
+                  textInputType: TextInputType.text,
+                  obscure: false,
                 ),
-              ],
+                const SizedBox(height: 10),
+                SignupButton(getName: () => nameText, getEmail: () => emailText, getPassword: () => passwordText, role: 0),
+              ]
             ),
           ),
         ),
       ),
     );
   }
-  
+
 }

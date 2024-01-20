@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class GlobalTextForm extends StatelessWidget{
   const GlobalTextForm({Key? key, required this.controller, required this.text, required this.textInputType, required this.obscure, }) : super(key: key);
@@ -27,9 +26,10 @@ class GlobalTextForm extends StatelessWidget{
         controller: controller,
         keyboardType: textInputType,
         obscureText: obscure,
+        autofocus: false,
         decoration: InputDecoration(
           hintText: text,
-          hintStyle: TextStyle(
+          hintStyle: const TextStyle(
             height: 1,
           ),
           border: InputBorder.none,
