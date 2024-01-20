@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:madcamp_week4/screens/login/login.dart';
 import 'package:madcamp_week4/widgets/global_button.dart';
 import '../../utils/global_colors.dart';
 import '../../widgets/global_text_form.dart';
@@ -28,14 +31,10 @@ class Signup extends StatelessWidget{
                 const SizedBox(height: 15),
                 Container(
                   alignment: Alignment.center,
-                  child: Text(
-                    'Grip!',
-                    style: TextStyle(
-                      color: GlobalColors.mainColor,
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  width: 600,
+                  height: 70,
+                  child:
+                  Image.asset('assets/logo.png', fit: BoxFit.fill,),
                 ),
                 const SizedBox(height: 30),
                 Text(
@@ -72,6 +71,7 @@ class Signup extends StatelessWidget{
                 ),
                 const SizedBox(height: 10),
                 SignupButton(getName: () => nameText, getEmail: () => emailText, getPassword: () => passwordText, role: 0),
+                BackToLogin(),
               ]
             ),
           ),
@@ -79,5 +79,4 @@ class Signup extends StatelessWidget{
       ),
     );
   }
-
 }

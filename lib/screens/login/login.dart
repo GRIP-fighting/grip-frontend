@@ -26,14 +26,10 @@ class LoginView extends StatelessWidget{
                 const SizedBox(height: 15),
                 Container(
                   alignment: Alignment.center,
-                  child: Text(
-                    'Grip!',
-                    style: TextStyle(
-                      color: GlobalColors.mainColor,
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  width: 600,
+                  height: 70,
+                  child:
+                    Image.asset('assets/logo.png', fit: BoxFit.fill,),
                 ),
                 const SizedBox(height: 30),
                 Text(

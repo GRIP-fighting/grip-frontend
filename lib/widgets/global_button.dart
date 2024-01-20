@@ -103,12 +103,6 @@ class GoToSignupButton extends StatelessWidget{
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(6),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-            ),
-          ],
         ),
         child: Text(
           'Sign Up',
@@ -216,6 +210,36 @@ class SignupButton extends StatelessWidget{
     );
 
     return emailRegex.hasMatch(email);
+  }
+
+}
+
+class BackToLogin extends StatelessWidget{
+  const BackToLogin({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      onTap: (){
+        Get.to(() => LoginView());
+      },
+      child: Container(
+        alignment: Alignment.center,
+        height: 45,
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          'Back To Login',
+          style: TextStyle(
+            color: GlobalColors.mainColor,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
   }
 
 }

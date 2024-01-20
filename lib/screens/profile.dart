@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class ProfileView extends StatelessWidget{
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +10,7 @@ class ProfileView extends StatelessWidget{
           child: Container(
             child: Column(
               children: [
-                Text('profile page'),
+
               ],
             ),
           ),
