@@ -19,10 +19,7 @@ app.use(cookieParser());
 
 const mongoose = require("mongoose");
 mongoose
-    .connect(config.mongoURI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
+    .connect(config.mongoURI, {})
     .then(() => console.log("MongoDB Connected..."))
     .catch((err) => console.log(err));
 
@@ -40,37 +37,36 @@ app.post("/api/users/register", async (req, res) => {
     }
 });
 
-app.post("/api/users/login", (req, res) => {
-    User.findOne(
-        {
-            email: req.body.email,
-        },
-        (err, user) => {
-            if (!user) {
-                return res.json({
-                    loginSuccess: false,
-                    message: "이메일에 해당하는 유저가 없습니다.",
-                });
-            }
-            // 요청된 이메일이 데이터 베이스에 있다면 비밀번호가 맞는 비밀번호인지 확인
-            user.comparePassword(req.body.password, (err, isMatch) => {
-                if (!isMatch) {
-                    return res.json({
-                        loginSuccess: false,
-                        message: "비밀번호가 틀렸습니다.",
-                    });
-                }
-                // 비밀번호까지 맞다면 토큰 생성
-                user.generateToken((err, user) => {
-                    if (err) return res.status(400).send(err);
-                    // 토큰을 저장한다. 어디에? 쿠키, 로컬스토리지, 세션 등등
-                    res.cookie("x_auth", user.token)
-                        .status(200)
-                        .json({ loginSuccess: true, userId: user._id });
-                });
+//로그인
+app.post("/api/users/login", async (req, res) => {
+    try {
+        // User.findOne을 사용하여 유저를 찾습니다.
+        const user = await User.findOne({ email: req.body.email });
+
+        if (!user) {
+            return res.json({
+                loginSuccess: false,
+                message: "이메일에 해당하는 유저가 없습니다.",
             });
         }
-    );
+        // 비밀번호 비교
+        const isMatch = await user.comparePassword(req.body.password);
+
+        if (!isMatch) {
+            return res.json({
+                loginSuccess: false,
+                message: "비밀번호가 틀렸습니다.",
+            });
+        }
+
+        // 비밀번호까지 맞다면 토큰 생성
+        const tokenUser = await user.generateToken();
+        res.cookie("x_auth", tokenUser.token)
+            .status(200)
+            .json({ loginSuccess: true, userId: tokenUser._id });
+    } catch (err) {
+        res.status(400).send(err);
+    }
 });
 
 // auth 미들웨어를 통과해야 다음으로 넘어감
