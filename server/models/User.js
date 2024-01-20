@@ -2,6 +2,7 @@ const mongoose = require("mongoose"); // 몽구스를 가져온다.
 const bcrypt = require("bcrypt"); // 비밀번호를 암호화 시키기 위해
 const saltRounds = 10; // salt를 몇 글자로 할지
 const jwt = require("jsonwebtoken"); // 토큰을 생성하기 위해
+const Schema = mongoose.Schema;
 
 const userSchema = mongoose.Schema({
     name: {
@@ -12,16 +13,33 @@ const userSchema = mongoose.Schema({
         type: String,
         trim: true, // 스페이스를 없애주는 역할
         unique: 1, // 중복을 허용하지 않는다.
+        index: true,
     },
     password: {
         type: String,
         minlength: 5,
+    },
+    score: {
+        type: Number,
+        default: 0,
     },
     role: {
         // 관리자와 일반 유저를 구분하기 위한 역할
         type: Number,
         default: 0, // 0은 일반 유저, 1은 관리자
     },
+    likedMapId: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Map",
+        },
+    ],
+    solvedMapId: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Map",
+        },
+    ],
     token: {
         type: String,
     },
@@ -78,7 +96,6 @@ userSchema.methods.generateToken = function () {
 // 토큰을 복호화하는 메소드
 userSchema.statics.findByToken = function (token) {
     const user = this;
-
     return new Promise((resolve, reject) => {
         jwt.verify(token, "secretToken", function (err, decoded) {
             if (err) return reject(err);
