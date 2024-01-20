@@ -4,7 +4,18 @@ const saltRounds = 10; // salt를 몇 글자로 할지
 const jwt = require("jsonwebtoken"); // 토큰을 생성하기 위해
 const Schema = mongoose.Schema;
 
+const counterSchema = mongoose.Schema({
+    _id: { type: String, required: true },
+    seq: { type: Number, default: 0 },
+});
+
+const Counter = mongoose.model("Counter", counterSchema);
+
 const userSchema = mongoose.Schema({
+    userId: {
+        type: Number,
+        unique: true, // 각 사용자에 대해 고유한 값이어야 합니다.
+    },
     name: {
         type: String,
         maxlength: 50,
@@ -46,35 +57,30 @@ const userSchema = mongoose.Schema({
 });
 
 // save하기 전에 비밀번호를 암호화 시킨다.
-userSchema.pre("save", function (next) {
+userSchema.pre("save", async function (next) {
     const user = this;
-    // 비밀번호를 바꿀 때만 암호화 시킨다.
-    if (user.isModified("password")) {
-        bcrypt.genSalt(saltRounds, function (err, salt) {
-            if (err) return next(err);
-            bcrypt.hash(user.password, salt, function (err, hash) {
-                if (err) return next(err);
-                user.password = hash;
-                next();
-            });
-        });
-    } else {
+    try {
+        if (this.isNew) {
+            // Counter 값을 증가시키고 userId 설정
+            const counter = await Counter.findByIdAndUpdate(
+                { _id: "userId" },
+                { $inc: { seq: 1 } },
+                { new: true, upsert: true }
+            );
+            user.userId = counter.seq;
+        }
+
+        // 비밀번호 암호화
+        if (user.isModified("password")) {
+            const salt = await bcrypt.genSalt(saltRounds);
+            user.password = await bcrypt.hash(user.password, salt);
+        }
+
         next();
+    } catch (error) {
+        next(error);
     }
 });
-
-userSchema.methods.comparePassword = function (plainPassword) {
-    const user = this;
-    return new Promise((resolve, reject) => {
-        bcrypt.compare(plainPassword, user.password, function (err, isMatch) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(isMatch);
-            }
-        });
-    });
-};
 
 // 토큰을 생성하는 메소드
 userSchema.methods.generateToken = function () {
@@ -93,6 +99,19 @@ userSchema.methods.generateToken = function () {
     });
 };
 
+userSchema.methods.comparePassword = function (plainPassword) {
+    const user = this;
+    return new Promise((resolve, reject) => {
+        bcrypt.compare(plainPassword, user.password, function (err, isMatch) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(isMatch);
+            }
+        });
+    });
+};
+
 // 토큰을 복호화하는 메소드
 userSchema.statics.findByToken = function (token) {
     const user = this;
@@ -108,6 +127,17 @@ userSchema.statics.findByToken = function (token) {
                 });
         });
     });
+};
+
+userSchema.statics.findByUserId = async function (userId) {
+    try {
+        const user = await this.findOne({ userId: userId })
+            .populate("solvedMapId")
+            .populate("likedMapId");
+        return user;
+    } catch (error) {
+        throw error;
+    }
 };
 
 const User = mongoose.model("User", userSchema); // 스키마를 모델로 감싸준다.

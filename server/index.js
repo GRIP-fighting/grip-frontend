@@ -20,6 +20,6 @@ mongoose
     .connect(config.mongoURI, {})
     .then(() => console.log("MongoDB Connected..."))
     .catch((err) => console.log(err));
-
+mongoose.set("debug", true);
 app.use("/api/users", usersRouter);
 app.use("/api/maps", mapsRouter);
