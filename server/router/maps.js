@@ -38,10 +38,9 @@ router.get("/:mapId", auth, async (req, res) => {
         if (!map) {
             return res.status(404).json({
                 success: false,
-                message: "사용자를 찾을 수 없습니다.",
+                message: "맵을 찾을 수 없습니다.",
             });
         }
-
         const designer = await User.find({ userId: { $in: map.designer } });
         const solutions = await Solution.find({
             solutionId: { $in: map.solutionId },

@@ -10,17 +10,9 @@ router.post("/", auth, async (req, res) => {
     const solution = new Solution(req.body);
     const user = req.user;
     try {
-        if (user) {
-            user.solutionId.push(solution.solutionid);
-            await user.save();
-        } else {
-            return res.status(404).json({
-                success: false,
-                message: "사용자를 찾을 수 없습니다.",
-            });
-        }
+        solution.userId = user.userId;
         await solution.save();
-        res.status(200).json({ success: true });
+        res.json({ success: true });
     } catch (error) {
         res.json({ success: false, err: error });
     }

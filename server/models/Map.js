@@ -53,13 +53,13 @@ mapSchema.pre("save", async function (next) {
 
 mapSchema.statics.findDetailsByMapId = async function (mapId) {
     try {
-        const user = await this.findOne({ mapId: mapId });
+        const map = await this.findOne({ mapId: mapId });
         // .populate({
         //     path: "designer",
         //     select: "-password -token -__v",
         // })
         // .populate("solutionId");
-        return user;
+        return map;
     } catch (error) {
         throw error;
     }
