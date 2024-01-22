@@ -23,8 +23,6 @@ async function initializCounter() {
                 seq: 0, // seq 값을 0으로 초기화
             });
             await newUserIdCounter.save();
-        } else {
-            console.log("userId counter is already initialized");
         }
         const mapIdCounter = await Counter.findById("mapId");
         if (!mapIdCounter) {
@@ -34,11 +32,17 @@ async function initializCounter() {
                 seq: 0, // seq 값을 0으로 초기화
             });
             await newMapIdCounter.save();
-        } else {
-            console.log("mapId counter is already initialized");
+        }
+        const solutionIdCounter = await Counter.findById("solutionId");
+        if (!solutionIdCounter) {
+            const newSolutionIdCounter = new Counter({
+                _id: "solutionId",
+                seq: 0, // seq 값을 0으로 초기화
+            });
+            await newSolutionIdCounter.save();
         }
     } catch (error) {
-        console.error("Error initializing mapId counter:", error);
+        console.error("Error initializing counter:", error);
     }
 }
 initializCounter();

@@ -4,6 +4,7 @@ const { auth } = require("../middleware/auth.js");
 const { User } = require("../models/User.js"); // 모델 스키마 가져오기
 const { Map } = require("../models/Map.js");
 const { Counter } = require("../models/Counter.js");
+const { Solution } = require("../models/Solution.js");
 
 // 회원가입
 router.post("/register", async (req, res) => {
@@ -37,7 +38,7 @@ router.post("/login", async (req, res) => {
         const tokenUser = await user.generateToken();
         res.cookie("x_auth", tokenUser.token)
             .status(200)
-            .json({ loginSuccess: true, userId: tokenUser._id });
+            .json({ loginSuccess: true, user: tokenUser });
     } catch (err) {
         res.status(400).send(err);
     }
@@ -73,17 +74,23 @@ router.get("/", auth, async (req, res) => {
 router.get("/:userId", auth, async (req, res) => {
     try {
         const userId = req.params.userId;
-        const user = await User.findDetailsByUserId(userId);
+        // const user = req.user;
+        const user = await User.findOne({ userId: userId });
         if (!user) {
             return res.status(404).json({
                 success: false,
                 message: "사용자를 찾을 수 없습니다.",
             });
         }
+        console.log(user);
+        const likedMaps = await Map.find({ mapId: { $in: user.likedMaps } });
+        const solutions = await Solution.find({
+            solutionId: { $in: user.solutionId },
+        });
         res.status(200).json({
             success: true,
-            likedMaps: user.likedMapId,
-            solutions: user.solutionId,
+            likedMaps: likedMaps,
+            solutions: solutions,
         });
     } catch (error) {
         console.error(error);

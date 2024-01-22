@@ -25,7 +25,6 @@ const userSchema = mongoose.Schema({
         minlength: 5,
     },
     role: {
-        // 관리자와 일반 유저를 구분하기 위한 역할
         type: Number,
         default: 0, // 0은 일반 유저, 1은 관리자
     },
@@ -39,14 +38,17 @@ const userSchema = mongoose.Schema({
     },
     likedMapId: [
         {
-            type: Schema.Types.ObjectId,
-            ref: "Map",
+            type: Number, // 또는 Integer로 변경
+        },
+    ],
+    likedSolutionId: [
+        {
+            type: Number, // 또는 Integer로 변경
         },
     ],
     solutionId: [
         {
-            type: Schema.Types.ObjectId,
-            ref: "Solution",
+            type: Number, // 또는 Integer로 변경
         },
     ],
     token: {
@@ -59,7 +61,6 @@ userSchema.pre("save", async function (next) {
     const user = this;
     try {
         if (this.isNew) {
-            // Counter 값을 증가시키고 userId 설정
             const counter = await Counter.findByIdAndUpdate(
                 { _id: "userId" },
                 { $inc: { seq: 1 } },
@@ -123,17 +124,6 @@ userSchema.statics.findByToken = function (token) {
                 });
         });
     });
-};
-
-userSchema.statics.findDetailsByUserId = async function (userId) {
-    try {
-        const user = await this.findOne({ userId: userId })
-            .populate("likedMapId")
-            .populate("solutionId");
-        return user;
-    } catch (error) {
-        throw error;
-    }
 };
 
 const User = mongoose.model("User", userSchema); // 스키마를 모델로 감싸준다.
