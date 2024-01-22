@@ -14,7 +14,7 @@ const Counter = mongoose.model("Counter", counterSchema);
 const userSchema = mongoose.Schema({
     userId: {
         type: Number,
-        unique: true, // 각 사용자에 대해 고유한 값이어야 합니다.
+        unique: true,
     },
     name: {
         type: String,
@@ -30,14 +30,18 @@ const userSchema = mongoose.Schema({
         type: String,
         minlength: 5,
     },
-    score: {
-        type: Number,
-        default: 0,
-    },
     role: {
         // 관리자와 일반 유저를 구분하기 위한 역할
         type: Number,
         default: 0, // 0은 일반 유저, 1은 관리자
+    },
+    score: {
+        type: Number,
+        default: 0,
+    },
+    liked: {
+        type: Number,
+        default: 0,
     },
     likedMapId: [
         {
@@ -45,7 +49,7 @@ const userSchema = mongoose.Schema({
             ref: "Map",
         },
     ],
-    solvedMapId: [
+    solutionId: [
         {
             type: Schema.Types.ObjectId,
             ref: "Map",

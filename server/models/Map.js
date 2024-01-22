@@ -1,19 +1,37 @@
 const mongoose = require("mongoose"); // 몽구스를 가져온다.
-const bcrypt = require("bcrypt"); // 비밀번호를 암호화 시키기 위해
-const saltRounds = 10; // salt를 몇 글자로 할지
-const jwt = require("jsonwebtoken"); // 토큰을 생성하기 위해
+const Schema = mongoose.Schema;
 
 const mapSchema = mongoose.Schema({
+    mapId: {
+        type: Number,
+        unique: true,
+    },
     mapName: {
         type: String,
         maxlength: 50,
     },
+    mapPath: {
+        type: String,
+    },
     level: {
         type: Number,
     },
-    imagePath: {
-        type: String,
+    liked: {
+        type: Number,
+        default: 0,
     },
+    designer: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Map",
+        },
+    ],
+    solutionId: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Map",
+        },
+    ],
 });
 
 const Map = mongoose.model("Map", mapSchema); // 스키마를 모델로 감싸준다.
