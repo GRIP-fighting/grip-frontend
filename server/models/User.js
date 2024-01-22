@@ -3,13 +3,7 @@ const bcrypt = require("bcrypt"); // 비밀번호를 암호화 시키기 위해
 const saltRounds = 10; // salt를 몇 글자로 할지
 const jwt = require("jsonwebtoken"); // 토큰을 생성하기 위해
 const Schema = mongoose.Schema;
-
-const counterSchema = mongoose.Schema({
-    _id: { type: String, required: true },
-    seq: { type: Number, default: 0 },
-});
-
-const Counter = mongoose.model("Counter", counterSchema);
+const { Counter } = require("./Counter.js");
 
 const userSchema = mongoose.Schema({
     userId: {
@@ -52,7 +46,7 @@ const userSchema = mongoose.Schema({
     solutionId: [
         {
             type: Schema.Types.ObjectId,
-            ref: "Map",
+            ref: "Solution",
         },
     ],
     token: {
@@ -73,13 +67,11 @@ userSchema.pre("save", async function (next) {
             );
             user.userId = counter.seq;
         }
-
         // 비밀번호 암호화
         if (user.isModified("password")) {
             const salt = await bcrypt.genSalt(saltRounds);
             user.password = await bcrypt.hash(user.password, salt);
         }
-
         next();
     } catch (error) {
         next(error);
@@ -133,11 +125,11 @@ userSchema.statics.findByToken = function (token) {
     });
 };
 
-userSchema.statics.findByUserId = async function (userId) {
+userSchema.statics.findDetailsByUserId = async function (userId) {
     try {
         const user = await this.findOne({ userId: userId })
-            .populate("solvedMapId")
-            .populate("likedMapId");
+            .populate("likedMapId")
+            .populate("solutionId");
         return user;
     } catch (error) {
         throw error;

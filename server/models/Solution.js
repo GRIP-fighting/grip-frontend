@@ -8,7 +8,7 @@ const solutionSchema = mongoose.Schema({
     },
     userId: {
         type: Schema.Types.ObjectId,
-        ref: "Map",
+        ref: "User",
     },
     mapId: {
         type: Schema.Types.ObjectId,
