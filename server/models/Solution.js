@@ -8,12 +8,10 @@ const solutionSchema = mongoose.Schema({
         unique: true,
     },
     userId: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
+        type: Number, // 또는 Integer로 변경
     },
     mapId: {
-        type: Schema.Types.ObjectId,
-        ref: "Map",
+        type: Number, // 또는 Integer로 변경
     },
     liked: {
         type: Number,

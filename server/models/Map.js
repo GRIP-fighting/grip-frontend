@@ -24,14 +24,12 @@ const mapSchema = mongoose.Schema({
     },
     designer: [
         {
-            type: Schema.Types.ObjectId,
-            ref: "User",
+            type: Number, // 또는 Integer로 변경
         },
     ],
     solutionId: [
         {
-            type: Schema.Types.ObjectId,
-            ref: "Solution",
+            type: Number, // 또는 Integer로 변경
         },
     ],
 });
@@ -55,12 +53,12 @@ mapSchema.pre("save", async function (next) {
 
 mapSchema.statics.findDetailsByMapId = async function (mapId) {
     try {
-        const user = await this.findOne({ mapId: mapId })
-            .populate({
-                path: "designer",
-                select: "-password -token -__v",
-            })
-            .populate("solutionId");
+        const user = await this.findOne({ mapId: mapId });
+        // .populate({
+        //     path: "designer",
+        //     select: "-password -token -__v",
+        // })
+        // .populate("solutionId");
         return user;
     } catch (error) {
         throw error;

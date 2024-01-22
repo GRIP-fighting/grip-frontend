@@ -11,7 +11,7 @@ router.post("/", auth, async (req, res) => {
     const user = req.user;
     try {
         if (user) {
-            user.solutionId.push(solution._id);
+            user.solutionId.push(solution.solutionid);
             await user.save();
         } else {
             return res.status(404).json({
@@ -26,6 +26,19 @@ router.post("/", auth, async (req, res) => {
     }
 });
 
+// solution 추가
+router.get("/", auth, async (req, res) => {
+    try {
+        const solutions = await Solution.find({}).select("-__v");
+        return res.status(200).json({
+            success: true,
+            solutions: solutions,
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error });
+    }
+});
+
 // 솔루션 좋아요
 router.patch("/:solutionId/liked", auth, async (req, res) => {
     const user = req.user;
@@ -37,21 +50,21 @@ router.patch("/:solutionId/liked", auth, async (req, res) => {
         if (!user || !solution) {
             return res.status(404).send("User or Map not found");
         }
-        if (!user.likedSolutionId.includes(solution._id)) {
+        if (!user.likedSolutionId.includes(solutionId)) {
             solution.liked = solution.liked + 1;
             await solution.save();
-            user.likedSolutionId.push(solution._id);
+            user.likedSolutionId.push(solutionId);
             await user.save();
         } else {
             solution.liked = solution.liked - 1;
             await solution.save();
-            user.likedSolutionId.pull(solution._id);
+            user.likedSolutionId.pull(solutionId);
             await user.save();
         }
 
         res.status(200).send({
             success: true,
-            mapLikes: solution.likes,
+            mapLikes: solution.liked,
             userLikedMaps: user.likedSolutionId,
         });
     } catch (error) {
