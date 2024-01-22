@@ -43,6 +43,12 @@ const userSchema = mongoose.Schema({
             ref: "Map",
         },
     ],
+    likedSolutionId: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Solution",
+        },
+    ],
     solutionId: [
         {
             type: Schema.Types.ObjectId,

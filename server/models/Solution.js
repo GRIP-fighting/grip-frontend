@@ -1,5 +1,6 @@
 const mongoose = require("mongoose"); // 몽구스를 가져온다.
 const Schema = mongoose.Schema;
+const { Counter } = require("./Counter.js");
 
 const solutionSchema = mongoose.Schema({
     solutionId: {
@@ -25,6 +26,23 @@ const solutionSchema = mongoose.Schema({
     solutionPath: {
         type: String,
     },
+});
+
+solutionSchema.pre("save", async function (next) {
+    const solution = this;
+    try {
+        if (this.isNew) {
+            const counter = await Counter.findByIdAndUpdate(
+                { _id: "solutionId" },
+                { $inc: { seq: 1 } },
+                { new: true, upsert: true }
+            );
+            solution.solutionId = counter.seq;
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
 const Solution = mongoose.model("Solution", solutionSchema); // 스키마를 모델로 감싸준다.

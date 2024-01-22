@@ -50,24 +50,50 @@ router.patch("/:mapId/liked", auth, async (req, res) => {
             return res.status(404).send("User or Map not found");
         }
         if (!user.likedMapId.includes(map._id)) {
-            map.likes = (map.likes || 0) + 1;
+            map.liked = map.liked + 1;
             await map.save();
             user.likedMapId.push(map._id);
             await user.save();
         } else {
-            map.likes = (map.likes || 0) - 1;
+            map.liked = map.liked - 1;
             await map.save();
-            user.likedMapId.pull(mapId);
+            user.likedMapId.pull(map._id);
             await user.save();
         }
 
         res.status(200).send({
             success: true,
-            mapLikes: map.likes,
+            mapLikes: map.liked,
             userLikedMaps: user.likedMapId,
         });
     } catch (error) {
         console.error(error);
+        res.status(500).send("An error occurred");
+    }
+});
+
+// 맵 정보 수정
+router.patch("/:mapId", auth, async (req, res) => {
+    const mapId = req.params.mapId;
+    const { mapName, designer } = req.body;
+    try {
+        const validDesignerIds = await User.find({
+            _id: { $in: designer },
+        }).select("_id");
+        if (validDesignerIds.length !== designer.length) {
+            return res.status(400).json({
+                message: "잘못된 사용자 ObjectId가 포함되어 있습니다.",
+            });
+        }
+        const map = await Map.findOne({ mapId: mapId });
+        map.mapName = mapName;
+        map.designer = designer;
+        await map.save();
+        res.status(200).send({
+            success: true,
+            map: map,
+        });
+    } catch (error) {
         res.status(500).send("An error occurred");
     }
 });

@@ -37,7 +37,7 @@ router.post("/login", async (req, res) => {
         const tokenUser = await user.generateToken();
         res.cookie("x_auth", tokenUser.token)
             .status(200)
-            .json({ loginSuccess: true, userId: tokenUser._id });
+            .json({ loginSuccess: true, user: tokenUser });
     } catch (err) {
         res.status(400).send(err);
     }
