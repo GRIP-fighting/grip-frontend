@@ -5,15 +5,17 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:madcamp_week4/screens/login/login.dart';
 import 'package:madcamp_week4/screens/login/signup.dart';
-import 'package:madcamp_week4/screens/profile.dart';
+import 'package:madcamp_week4/screens/profile/profile.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 // login
 class LoginButton extends StatelessWidget{
-  const LoginButton({Key? key, required this.getEmail, required this.getPassword, }) : super(key: key);
+  LoginButton({Key? key, required this.getEmail, required this.getPassword, }) : super(key: key);
   final Function() getEmail;
   final Function() getPassword;
+
+  String authToken = '';
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +24,16 @@ class LoginButton extends StatelessWidget{
         String email = getEmail();
         String password = getPassword();
         bool isSuccess;
+        String userId;
 
-        isSuccess = await sendLoginData(email, password);
+        dynamic response = await sendLoginData(email, password);
+
+        // body
+        isSuccess = response['loginSuccess'];
+        userId = response['userId'];
+
         if(isSuccess){
-          Get.to(() => ProfileView());
+          Get.to(() => ProfileView(userId: userId, authToken: authToken,));
         }
         else{
           showToast();
@@ -55,7 +63,7 @@ class LoginButton extends StatelessWidget{
     );
   }
 
-  Future<bool> sendLoginData(String email, String password) async{
+  Future<dynamic> sendLoginData(String email, String password) async{
     dynamic data = {'email': email, 'password': password, };
     String jsonString = jsonEncode(data);
     print('Login Data: $jsonString');
@@ -65,16 +73,14 @@ class LoginButton extends StatelessWidget{
       print("Response status code: ${response.statusCode}");
       print("Response body: ${response.body}");
 
-      // check whether login successed
       if (response.statusCode == 200) {
         dynamic responseBody = jsonDecode(response.body);
-        return responseBody['loginSuccess'] ?? false;
+        return responseBody;
       } else {
-        return false;
+        return '';
       }
     } catch (e) {
       print("Error: $e");
-      return false;
     }
   }
 
