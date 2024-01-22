@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="madcamp_week4"
+        android:label="Gr!p"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

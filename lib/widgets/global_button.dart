@@ -3,40 +3,73 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:madcamp_week4/main.dart';
 import 'package:madcamp_week4/screens/login/login.dart';
 import 'package:madcamp_week4/screens/login/signup.dart';
 import 'package:madcamp_week4/screens/profile/profile.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../utils/global_data.dart';
+
 // login
-class LoginButton extends StatelessWidget{
-  LoginButton({Key? key, required this.getEmail, required this.getPassword, }) : super(key: key);
+class LoginButton extends StatefulWidget{
+  const LoginButton({Key? key, required this.getEmail, required this.getPassword, }) : super(key: key);
   final Function() getEmail;
   final Function() getPassword;
 
+  @override
+  State<LoginButton> createState() => _LoginButtonState();
+}
+
+class _LoginButtonState extends State<LoginButton> {
   String authToken = '';
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        String email = getEmail();
-        String password = getPassword();
-        bool isSuccess;
-        String userId;
+        String email = widget.getEmail();
+        String password = widget.getPassword();
+        var headers;
 
-        dynamic response = await sendLoginData(email, password);
+        // extract data from response
+        http.Response response = await sendLoginData(email, password);
+        String tmp = response.body;
+        print('response for sendLoginData: $tmp');
 
-        // body
-        isSuccess = response['loginSuccess'];
-        userId = response['userId'];
+        try {
+          // get cookie
+          if (response.headers != null) {
+            headers = response.headers;
+            final String? cookies = headers['set-cookie'];
+            if (cookies != null && cookies.isNotEmpty) {
+              final authTokenCookie = cookies;
+              final String tokentmp = authTokenCookie!.split('=')[1];
+              final String tokenPart = tokentmp.split(';')[0];
+              print('tokenPart: $tokenPart');
+              setState(() {
+                authToken = tokenPart;
+              });
+            }
+          }
 
-        if(isSuccess){
-          Get.to(() => ProfileView(userId: userId, authToken: authToken,));
-        }
-        else{
-          showToast();
+          dynamic jsonData = response.body;
+          // get user data
+          Map<String, dynamic> jsonMap = json.decode(jsonData);
+          UserData userData = UserData.fromJson(jsonMap);
+
+          print('Login Success: ${userData.loginSuccess}');
+          print('User ID: ${userData.user.userId}');
+          print('User Name: ${userData.user.name}');
+
+          if (userData.loginSuccess) {
+            Get.to(() => MyHomePage(user: userData.user, authToken: authToken,));
+          } else {
+            showToast();
+          }
+        } catch (e) {
+          print("Error parsing response body: $e");
         }
       },
       child: Container(
@@ -71,11 +104,10 @@ class LoginButton extends StatelessWidget{
       final response = await http.post(Uri.parse('http://143.248.225.53:8000/api/users/login'),
           headers: {"Content-Type": "application/json"}, body: jsonString);
       print("Response status code: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      print("Response body for login data: ${response.body}");
 
       if (response.statusCode == 200) {
-        dynamic responseBody = jsonDecode(response.body);
-        return responseBody;
+        return response;
       } else {
         return '';
       }
@@ -170,7 +202,7 @@ class SignupButton extends StatelessWidget{
             ),
           ],
         ),
-        child: Text(
+        child: const Text(
           'Sign Up',
           style: TextStyle(
             color: Colors.white,

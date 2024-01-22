@@ -6,21 +6,26 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:madcamp_week4/screens/profile/edit_profile.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
 
+import '../../utils/global_data.dart';
+
 class ProfileView extends StatelessWidget{
-  const ProfileView({Key? key, required this.userId, required this.authToken,}) : super(key: key);
-  final String userId;
+  ProfileView({Key? key, required this.user, required this.authToken}) : super(key: key);
+  final User user;
   final String authToken;
+
+  // for auth
+  Map<String, String> headers = {};
 
   @override
   Widget build(BuildContext context) {
 
-    print('authToken: '+authToken);
-
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: GlobalColors.mainColor,
         elevation: 0,
         foregroundColor: Colors.white.withOpacity(0.4),
+        centerTitle: true,
         title: const Text(
           'Profile',
           textAlign: TextAlign.center,
@@ -63,7 +68,7 @@ class ProfileView extends StatelessWidget{
                 const SizedBox(height: 20,),
                 // name
                 Text(
-                  'Name',
+                  user.name,
                   style: TextStyle(
                     color: GlobalColors.textColor,
                     //fontWeight: FontWeight.bold,
@@ -91,7 +96,7 @@ class ProfileView extends StatelessWidget{
                         ),
                       ),
                       Text(
-                        '점수',
+                        '${user.score}',
                         style: TextStyle(
                           color: GlobalColors.textColor,
                           fontSize: 16,
@@ -125,7 +130,7 @@ class ProfileView extends StatelessWidget{
                         ),
                         const SizedBox(height: 10,),
                         FutureBuilder(
-                            future: getAchievedMap(userId),
+                            future: getAchievedMap(user.userId),
                             builder: (context, snapshot){
                               return const Text(
                                 'test'
@@ -144,17 +149,23 @@ class ProfileView extends StatelessWidget{
     );
   }
 
-  Future<List<String>?> getAchievedMap(String id) async {
-    getMapData(id);
+  Future<List<String>?> getAchievedMap(int id) async {
+    dynamic response = getMapData(id);
+
+
   }
 
-  Future<dynamic> getMapData(String id) async {
-    String userId = Uri.encodeComponent(id);
-    print('Encoded userId: $userId');
+  Future<dynamic> getMapData(int id) async {
+
+    String userId = jsonEncode(id);
+
+    // set cookie
+    headers['cookie'] = "x_auth=$authToken";
+
     try {
       final response = await http.get(Uri.parse('http://143.248.225.53:8000/api/users/$userId'),
-          headers: {"Content-Type": "application/json"});
-      print("Response body: ${response.body}");
+          headers: headers);
+      print("getMapData Response body: ${response.body}");
 
       dynamic responseBody = jsonDecode(response.body);
       return responseBody;
