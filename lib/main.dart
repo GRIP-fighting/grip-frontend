@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:madcamp_week4/screens/maps/rank_main.dart';
 import 'package:madcamp_week4/screens/profile/profile.dart';
-import 'package:madcamp_week4/screens/maps/rank.dart';
 import 'package:madcamp_week4/screens/splash_view.dart';
 import 'package:madcamp_week4/screens/upload/upload_solutions.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
           index: _currentIndex,
           children: [
             UploadSolution(),
-            RankView(),
+            RankView(authToken: widget.authToken,),
             ProfileView(user: widget.user, authToken: widget.authToken),
           ],
         ),

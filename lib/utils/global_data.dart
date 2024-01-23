@@ -54,6 +54,51 @@ class User {
   }
 }
 
+class UserRankingData {
+  final String id;
+  final String name;
+  final String email;
+  final int role;
+  final int score;
+  final int liked;
+  final List<int> likedMapId;
+  final List<int> likedSolutionId;
+  final List<int> mapId;
+  final List<int> solutionId;
+  final int userId;
+
+  UserRankingData({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.role,
+    required this.score,
+    required this.liked,
+    required this.likedMapId,
+    required this.likedSolutionId,
+    required this.mapId,
+    required this.solutionId,
+    required this.userId,
+  });
+
+  factory UserRankingData.fromJson(Map<String, dynamic> json) {
+    return UserRankingData(
+      id: json['_id'],
+      name: json['name'],
+      email: json['email'],
+      role: json['role'],
+      score: json['score'],
+      liked: json['liked'],
+      likedMapId: List<int>.from(json['likedMapId']),
+      likedSolutionId: List<int>.from(json['likedSolutionId']),
+      mapId: List<int>.from(json['mapId']),
+      solutionId: List<int>.from(json['solutionId']),
+      userId: json['userId'],
+    );
+  }
+}
+
+
 // map data
 class Solution {
   String id;
@@ -199,6 +244,41 @@ class MapData {
       solutionId: List<int>.from(json['solutionId']),
       mapId: json['mapId'],
       version: json['__v'],
+    );
+  }
+}
+
+class MapRankingData {
+  final String id;
+  final String mapName;
+  final String mapPath;
+  final int level;
+  final int liked;
+  final List<int> designer;
+  final List<int> solutionId;
+  final int mapId;
+
+  MapRankingData({
+    required this.id,
+    required this.mapName,
+    required this.mapPath,
+    required this.level,
+    required this.liked,
+    required this.designer,
+    required this.solutionId,
+    required this.mapId,
+  });
+
+  factory MapRankingData.fromJson(Map<String, dynamic> json) {
+    return MapRankingData(
+      id: json['_id'] ?? '',
+      mapName: json['mapName'] ?? '',
+      mapPath: json['mapPath'] ?? '',
+      level: json['level'] ?? 0,
+      liked: json['liked'] ?? 0,
+      designer: (json['designer'] as List<dynamic>).cast<int>(),
+      solutionId: (json['solutionId'] as List<dynamic>).cast<int>(),
+      mapId: json['mapId'] ?? 0,
     );
   }
 }
