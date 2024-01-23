@@ -38,7 +38,7 @@ solutionSchema.pre("save", async function (next) {
                 { new: true, upsert: true }
             );
             solution.solutionId = counter.seq;
-            console.log(solution);
+
             const user = await User.findOne({ userId: solution.userId });
             const map = await Map.findOne({ mapId: solution.mapId });
             user.solutionId.push(solution.solutionId);
@@ -54,4 +54,4 @@ solutionSchema.pre("save", async function (next) {
 
 const Solution = mongoose.model("Solution", solutionSchema); // 스키마를 모델로 감싸준다.
 
-module.exports = { Solution }; // 다른 곳에서도 사용할 수 있도록 export 해준다.
+module.exports = { Solution };
