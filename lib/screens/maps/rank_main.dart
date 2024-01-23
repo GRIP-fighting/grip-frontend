@@ -31,6 +31,12 @@ class RankView extends StatelessWidget{
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Image.asset(
+                  width: 100,
+                  height: 100,
+                  'assets/logo.png',
+                  fit: BoxFit.contain,
+                ),
                 GoToMapRanking(authToken: authToken),
                 const SizedBox(height: 10,),
                 GoToUserRanking(authToken: authToken),

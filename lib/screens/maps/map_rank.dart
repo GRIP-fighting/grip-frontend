@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:madcamp_week4/screens/maps/map_detail.dart';
 import '../../utils/global_colors.dart';
 import '../../utils/global_data.dart';
 
@@ -44,6 +47,16 @@ class MapRankView extends StatelessWidget{
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'Ranking Criteria: Number of Likes',
+                            style: TextStyle(
+                              color: GlobalColors.textColor,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 10,),
                         FutureBuilder<List<MapRankingData>?>(
                           future: getMapData(),
@@ -68,12 +81,17 @@ class MapRankView extends StatelessWidget{
                                       color: GlobalColors.textColor.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: ListTile(
-                                      leading: const Icon(Icons.keyboard_arrow_right_outlined),
-                                      title: Text("${index+1}. Map ID: ${maps[index].mapId}"),
-                                      subtitle: Text('Level: ${maps[index].level}\n'
-                                          '${maps[index].liked} Likes'),
-                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        print('ListTile clicked');
+                                        Get.to(() => MapDetailView(authToken: authToken, map: maps[index]));
+                                      },
+                                      child: ListTile(
+                                        leading: const Icon(Icons.keyboard_arrow_right_outlined),
+                                        title: Text("${index + 1}. ${maps[index].mapName}"),
+                                        subtitle: Text('Level: ${maps[index].level}\n${maps[index].liked} Likes'),
+                                      ),
+                                    )
                                   );
                                 },
                               );

@@ -1,14 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:madcamp_week4/screens/profile/edit_profile.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
 import 'dart:io';
 import 'dart:async';
-
 import '../../utils/global_data.dart';
 
 class ProfileView extends StatefulWidget{
@@ -30,6 +26,14 @@ class ProfileView extends StatefulWidget{
 class _ProfileViewState extends State<ProfileView> {
   // for auth
   Map<String, String> headers = {};
+
+  // track visibility
+  Map<String, bool> containerVisibility = {
+    'myMaps': false,
+    'mySolutions': false,
+    'likedMaps': false,
+    'likedSolutions': false,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -129,246 +133,392 @@ class _ProfileViewState extends State<ProfileView> {
                   padding: const EdgeInsets.only(left: 10, right: 10,),
                   child: const Divider(),
                 ),
-                // map - my map: maps user made
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(10),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: GlobalColors.textColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const Text(
+                const SizedBox(height: 10,),
+                // navigation buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(width: 5,),
+                    // button: show my maps
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        setState(() {
+                          toggleContainerVisibility('myMaps');
+                        });
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: 80,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: GlobalColors.mainColor,
+                            width: 2,
+                          ),
+                          color: Colors.white,
+                        ),
+                        child: Text(
                           'My Maps',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            color: GlobalColors.mainColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(height: 10,),
-                        FutureBuilder<List<MapData>?>(
-                          future: getMyMapData(widget.user.userId),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              // While data is still loading
-                              return const CircularProgressIndicator();
-                            } else if (snapshot.hasError) {
-                              // If there's an error
-                              return Text("Error: ${snapshot.error}");
-                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              // If data is empty or null
-                              return const Text("No data available.");
-                            } else {
-                              // If data is available
-                              widget.MyMaps = snapshot.data!;
-                              return ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: widget.MyMaps.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    margin: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: GlobalColors.textColor.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: ListTile(
-                                      leading: const Icon(Icons.keyboard_arrow_right_outlined),
-                                      title: Text("Map ID: ${widget.MyMaps[index].mapId}"),
-                                      subtitle: Text('Level: ${widget.MyMaps[index].level}\n'
-                                          '${widget.MyMaps[index].liked} Likes'),
-                                    ),
-                                  );
-                                },
-                              );
-                            }
-                          },
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                // map - solutions
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(10),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: GlobalColors.textColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const Text(
-                            'Solutions',
+                    // button: show my solutions
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        setState(() {
+                          toggleContainerVisibility('mySolutions');
+                        });
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: 80,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: GlobalColors.mainColor,
+                            width: 2,
+                          ),
+                          color: Colors.white,
+                        ),
+                        child: Text(
+                          'My Solutions',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            color: GlobalColors.mainColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(height: 10,),
-                        FutureBuilder<List<Solution>?>(
-                          future: getAchievedMapData(widget.user.userId),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              // While data is still loading
-                              return const CircularProgressIndicator();
-                            } else if (snapshot.hasError) {
-                              // If there's an error
-                              return Text("Error: ${snapshot.error}");
-                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              // If data is empty or null
-                              return const Text("No data available.");
-                            } else {
-                              // If data is available
-                              widget.solutions = snapshot.data!;
-                              return ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: widget.solutions.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    margin: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: GlobalColors.textColor.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: ListTile(
-                                      leading: const Icon(Icons.keyboard_arrow_right_rounded),
-                                      title: Text("Map ID: ${widget.solutions[index].mapId}"),
-                                      subtitle: Text('evaluatedLevel: ${widget.solutions[index].evaluatedLevel}'),
-                                    ),
-                                  );
-                                },
-                              );
-                            }
-                          },
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                // liked maps
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(10),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: GlobalColors.textColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const Text(
+                    // button: show liked maps
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        setState(() {
+                          toggleContainerVisibility('likedMaps');
+                        });
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: 80,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: GlobalColors.mainColor,
+                            width: 2,
+                          ),
+                          color: Colors.white,
+                        ),
+                        child: Text(
                           'Liked Maps',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            color: GlobalColors.mainColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(height: 10,),
-                        FutureBuilder<List<LikedMap>?>(
-                          future: getLikedMapData(widget.user.userId),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              // While data is still loading
-                              return const CircularProgressIndicator();
-                            } else if (snapshot.hasError) {
-                              // If there's an error
-                              return Text("Error: ${snapshot.error}");
-                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              // If data is empty or null
-                              return const Text("No data available.");
-                            } else {
-                              // If data is available
-                              widget.likedMaps = snapshot.data!;
-                              return ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: widget.likedMaps.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    margin: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: GlobalColors.textColor.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: ListTile(
-                                      leading: const Icon(Icons.favorite, color: Colors.red,),
-                                      title: Text("Map ID: ${widget.likedMaps[index].mapId}"),
-                                      subtitle: Text('Designer: ${widget.likedMaps[index].designer}\n'
-                                                      '${widget.likedMaps[index].liked} Likes'),
-                                    ),
-                                  );
-                                },
-                              );
-                            }
-                          },
+                      ),
+                    ),
+                    // button: show liked solutions
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        setState(() {
+                          toggleContainerVisibility('likedSolutions');
+                        });
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: 80,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: GlobalColors.mainColor,
+                            width: 2,
+                          ),
+                          color: Colors.white,
                         ),
-                      ],
+                        child: Text(
+                          'Liked Solutions',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: GlobalColors.mainColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 5,),
+                  ],
+                ),
+
+                // visibility for my maps
+                Visibility(
+                  visible: containerVisibility['myMaps']!,
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: GlobalColors.textColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const Text(
+                            'My Maps',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          FutureBuilder<List<MapData>?>(
+                            future: getMyMapData(widget.user.userId),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                // While data is still loading
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                // If there's an error
+                                return Text("Error: ${snapshot.error}");
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                // If data is empty or null
+                                return const Text("No data available.");
+                              } else {
+                                // If data is available
+                                widget.MyMaps = snapshot.data!;
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: widget.MyMaps.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      margin: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        color: GlobalColors.textColor.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: ListTile(
+                                        leading: const Icon(Icons.keyboard_arrow_right_outlined),
+                                        title: Text("Map ID: ${widget.MyMaps[index].mapId}"),
+                                        subtitle: Text('Level: ${widget.MyMaps[index].level}\n'
+                                            '${widget.MyMaps[index].liked} Likes'),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                // liked solutions
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(10),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: GlobalColors.textColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const Text(
-                          'Liked Solutions',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                // visibility for my solutions
+                Visibility(
+                  visible: containerVisibility['mySolutions']!,
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: GlobalColors.textColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const Text(
+                            'My Solutions',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10,),
-                        FutureBuilder<List<LikedSolution>?>(
-                          future: getLikedSolutionData(widget.user.userId),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              // While data is still loading
-                              return const CircularProgressIndicator();
-                            } else if (snapshot.hasError) {
-                              // If there's an error
-                              return Text("Error: ${snapshot.error}");
-                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              // If data is empty or null
-                              return const Text("No data available.");
-                            } else {
-                              // If data is available
-                              widget.likedSolutions = snapshot.data!;
-                              return ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: widget.likedSolutions.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    margin: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: GlobalColors.textColor.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: ListTile(
-                                      leading: const Icon(Icons.favorite, color: Colors.red,),
-                                      title: Text("Map ID: ${widget.likedSolutions[index].mapId}"),
-                                      subtitle: Text('Solution Provider: ${widget.likedSolutions[index].userId}\n'
-                                          '${widget.likedSolutions[index].liked} Likes'),
-                                    ),
-                                  );
-                                },
-                              );
-                            }
-                          },
-                        ),
-                      ],
+                          const SizedBox(height: 10,),
+                          FutureBuilder<List<Solution>?>(
+                            future: getAchievedMapData(widget.user.userId),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                // While data is still loading
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                // If there's an error
+                                return Text("Error: ${snapshot.error}");
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                // If data is empty or null
+                                return const Text("No data available.");
+                              } else {
+                                // If data is available
+                                widget.solutions = snapshot.data!;
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: widget.solutions.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      margin: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        color: GlobalColors.textColor.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: ListTile(
+                                        leading: const Icon(Icons.keyboard_arrow_right_rounded),
+                                        title: Text("Map ID: ${widget.solutions[index].mapId}"),
+                                        subtitle: Text('evaluatedLevel: ${widget.solutions[index].evaluatedLevel}'),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // visibility for liked maps
+                Visibility(
+                  visible: containerVisibility['likedMaps']!,
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: GlobalColors.textColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const Text(
+                            'Liked Maps',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          FutureBuilder<List<LikedMap>?>(
+                            future: getLikedMapData(widget.user.userId),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                // While data is still loading
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                // If there's an error
+                                return Text("Error: ${snapshot.error}");
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                // If data is empty or null
+                                return const Text("No data available.");
+                              } else {
+                                // If data is available
+                                widget.likedMaps = snapshot.data!;
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: widget.likedMaps.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      margin: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        color: GlobalColors.textColor.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: ListTile(
+                                        leading: const Icon(Icons.favorite, color: Colors.red,),
+                                        title: Text("Map ID: ${widget.likedMaps[index].mapId}"),
+                                        subtitle: Text('Designer: ${widget.likedMaps[index].designer}\n'
+                                            '${widget.likedMaps[index].liked} Likes'),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // visibility for liked solutions
+                Visibility(
+                  visible: containerVisibility['likedSolutions']!,
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: GlobalColors.textColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const Text(
+                            'Liked Solutions',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          FutureBuilder<List<LikedSolution>?>(
+                            future: getLikedSolutionData(widget.user.userId),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                // While data is still loading
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                // If there's an error
+                                return Text("Error: ${snapshot.error}");
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                // If data is empty or null
+                                return const Text("No data available.");
+                              } else {
+                                // If data is available
+                                widget.likedSolutions = snapshot.data!;
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: widget.likedSolutions.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      margin: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        color: GlobalColors.textColor.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: ListTile(
+                                        leading: const Icon(Icons.favorite, color: Colors.red,),
+                                        title: Text("Map ID: ${widget.likedSolutions[index].mapId}"),
+                                        subtitle: Text('Solution Provider: ${widget.likedSolutions[index].userId}\n'
+                                            '${widget.likedSolutions[index].liked} Likes'),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -378,6 +528,19 @@ class _ProfileViewState extends State<ProfileView> {
         ),
       ),
     );
+  }
+
+  void toggleContainerVisibility(String containerKey) {
+    setState(() {
+      // initialize
+      containerVisibility['myMaps'] = false;
+      containerVisibility['mySolutions'] = false;
+      containerVisibility['likedMaps'] = false;
+      containerVisibility['likedSolutions'] = false;
+
+      // set visibility
+      containerVisibility[containerKey] = !containerVisibility[containerKey]!;
+    });
   }
 
   Future<List<MapData>?> getMyMapData(int id) async {

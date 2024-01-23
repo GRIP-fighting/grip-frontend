@@ -10,6 +10,7 @@ import 'package:madcamp_week4/screens/maps/map_rank.dart';
 import 'package:madcamp_week4/screens/maps/user_rank.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../screens/profile/profile.dart';
 import '../utils/global_data.dart';
 
 // login
