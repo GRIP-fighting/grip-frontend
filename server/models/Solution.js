@@ -19,7 +19,7 @@ const solutionSchema = mongoose.Schema({
         type: Number,
         default: 0,
     },
-    evalutedLevel: {
+    evaluatedLevel: {
         type: Number,
         default: 0,
     },

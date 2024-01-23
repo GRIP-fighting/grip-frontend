@@ -3,8 +3,8 @@ var router = express.Router();
 const { auth } = require("../middleware/auth.js");
 const { User } = require("../models/User.js"); // 모델 스키마 가져오기
 const { Map } = require("../models/Map.js");
-const { Counter } = require("../models/Counter.js");
 const { Solution } = require("../models/Solution.js");
+const { Counter } = require("../models/Counter.js");
 
 // 회원가입
 router.post("/register", async (req, res) => {
@@ -54,6 +54,25 @@ router.get("/logout", auth, async (req, res) => {
         res.status(200).send({ success: true });
     } catch (err) {
         res.json({ success: false, err });
+    }
+});
+
+// 계정 탈퇴
+router.delete("/", auth, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const deletedUser = await User.findByIdAndDelete(userId);
+        if (!deletedUser) {
+            return res
+                .status(404)
+                .json({ success: false, message: "User not found." });
+        }
+        res.status(200).json({
+            success: true,
+            message: "User account has been successfully deleted.",
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
     }
 });
 

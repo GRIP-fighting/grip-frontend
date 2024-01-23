@@ -65,4 +65,40 @@ router.patch("/:solutionId/liked", auth, async (req, res) => {
     }
 });
 
+// 맵 삭제 - 자기 자신만
+router.delete("/:solutionId/delete", auth, async (req, res) => {
+    try {
+        const solutionId = req.params.solutionId;
+        const solution = await Solution.findOne({ solutionId: solutionId });
+        const userId = req.user.userId;
+        const user = req.user;
+
+        if (!solution) {
+            return res
+                .status(404)
+                .json({ success: false, message: "Solution not found." });
+        }
+
+        if (solution.userId != userId) {
+            return res.status(404).json({
+                success: false,
+                message: "No Permission",
+            });
+        }
+        await Solution.findByIdAndDelete(solution._id);
+
+        user.solutionId = user.solutionId.filter(
+            (mySolutionId) => mySolutionId !== solutionId
+        );
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "User has been successfully removed from the map.",
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 module.exports = router;

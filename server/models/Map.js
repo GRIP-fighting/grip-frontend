@@ -44,6 +44,17 @@ mapSchema.pre("save", async function (next) {
                 { new: true, upsert: true }
             );
             map.mapId = counter.seq;
+            // for (const designerId of map.designer) {
+            //     const user = await User.findOne({ userId: designerId });
+            //     if (user) {
+            //         user.solutionId.push(map.mapId);
+            //         await user.save();
+            //     }
+            // }
+            await User.updateMany(
+                { UserId: { $in: map.designer } },
+                { $push: { solutionId: map.mapId } }
+            );
         }
         next();
     } catch (error) {

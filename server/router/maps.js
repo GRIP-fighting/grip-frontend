@@ -56,6 +56,50 @@ router.get("/:mapId", auth, async (req, res) => {
     }
 });
 
+// 맵 삭제 - 자기 자신만
+router.delete("/:mapId/delete", auth, async (req, res) => {
+    try {
+        const mapId = req.params.mapId;
+        const map = await Map.findOne({ mapId: mapId });
+        const userId = req.user.userId;
+        const user = req.user;
+
+        if (!map) {
+            return res
+                .status(404)
+                .json({ success: false, message: "Map not found." });
+        }
+
+        if (map.designer.includes(userId)) {
+            user.mapId = user.mapId.filter((myMapId) => myMapId !== mapId);
+            await user.save();
+
+            map.designer = map.designer.filter(
+                (designerId) => designerId !== userId
+            );
+            if (map.designer.length === 0) {
+                await Map.findByIdAndDelete(map._id);
+                return res.status(200).json({
+                    success: true,
+                    message: "Map and user have been successfully deleted.",
+                });
+            }
+            await map.save();
+            return res.status(200).json({
+                success: true,
+                message: "User has been successfully removed from the map.",
+            });
+        } else {
+            return res.status(404).json({
+                success: false,
+                message: "User not found in the map.",
+            });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 // 맵 좋아요
 router.patch("/:mapId/liked", auth, async (req, res) => {
     const user = req.user;

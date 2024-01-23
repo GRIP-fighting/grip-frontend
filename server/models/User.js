@@ -46,11 +46,17 @@ const userSchema = mongoose.Schema({
             type: Number, // 또는 Integer로 변경
         },
     ],
+    mapId: [
+        {
+            type: Number, // 또는 Integer로 변경
+        },
+    ],
     solutionId: [
         {
             type: Number, // 또는 Integer로 변경
         },
     ],
+
     token: {
         type: String,
     },
