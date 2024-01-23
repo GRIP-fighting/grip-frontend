@@ -281,3 +281,35 @@ class BackToLogin extends StatelessWidget{
   }
 
 }
+
+class ProfileNavigationButton extends StatelessWidget {
+  const ProfileNavigationButton({Key? key, required this.info}) : super(key: key);
+  final String info;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      onTap: (){
+        Get.to(() => LoginView());
+      },
+      child: Container(
+        alignment: Alignment.center,
+        height: 45,
+        width: 150,
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          info,
+          style: TextStyle(
+            color: GlobalColors.mainColor,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+}
