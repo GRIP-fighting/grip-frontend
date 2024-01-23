@@ -45,7 +45,6 @@ mapSchema.pre("save", async function (next) {
                 { new: true, upsert: true }
             );
             map.mapId = counter.seq;
-            å;
             try {
                 await User.updateMany(
                     { userId: { $in: map.designer } },

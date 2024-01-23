@@ -102,13 +102,19 @@ router.get("/:userId", auth, async (req, res) => {
             });
         }
         console.log(user);
-        const likedMaps = await Map.find({ mapId: { $in: user.likedMaps } });
+        const likedMaps = await Map.find({ mapId: { $in: user.likedMapId } });
+        const likedSolutions = await Solution.find({
+            solutionId: { $in: user.likedSolutionId },
+        });
+        const maps = await Map.find({ mapId: { $in: user.mapId } });
         const solutions = await Solution.find({
             solutionId: { $in: user.solutionId },
         });
         res.status(200).json({
             success: true,
             likedMaps: likedMaps,
+            likedSolutions: likedSolutions,
+            maps: maps,
             solutions: solutions,
         });
     } catch (error) {
