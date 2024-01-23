@@ -3,8 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:madcamp_week4/screens/profile/edit_profile.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
+import 'dart:io';
+import 'dart:async';
 
 import '../../utils/global_data.dart';
 
@@ -16,6 +19,9 @@ class ProfileView extends StatefulWidget{
   late List<LikedMap> likedMaps;
   late List<LikedSolution> likedSolutions;
   late List<MapData> MyMaps;
+
+  late XFile? _image = null;
+  late final ImagePicker picker = ImagePicker();
 
   @override
   State<ProfileView> createState() => _ProfileViewState();
@@ -54,13 +60,17 @@ class _ProfileViewState extends State<ProfileView> {
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 50,
-                      backgroundImage: AssetImage('assets/avatar.jpeg'),
+                      backgroundImage: widget._image != null
+                          ? FileImage(File(widget._image!.path))
+                          : const AssetImage('assets/avatar.jpeg') as ImageProvider<Object>,
                     ),
                     InkWell(
                       onTap: (){
-                        Get.to(() => EditProfile());
+                        print('press Edit button');
+                        //Get.to(() => EditProfile());
+                        getImage(ImageSource.gallery);
                       },
                       child: CircleAvatar(
                         radius: 12,
@@ -118,12 +128,6 @@ class _ProfileViewState extends State<ProfileView> {
                 Container(
                   padding: const EdgeInsets.only(left: 10, right: 10,),
                   child: const Divider(),
-                ),
-                // navigaton bar
-                Row(
-                  children: [
-
-                  ],
                 ),
                 // map - my map: maps user made
                 Container(
@@ -497,6 +501,15 @@ class _ProfileViewState extends State<ProfileView> {
     } catch (e) {
       print("getLikedSolutionData Error: $e");
       return null;
+    }
+  }
+
+  Future getImage(ImageSource imageSource) async {
+    final XFile? pickedFile = await widget.picker.pickImage(source: imageSource);
+    if (pickedFile != null) {
+      setState(() {
+        widget._image = XFile(pickedFile.path);
+      });
     }
   }
 }

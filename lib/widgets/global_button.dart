@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:madcamp_week4/main.dart';
 import 'package:madcamp_week4/screens/login/login.dart';
 import 'package:madcamp_week4/screens/login/signup.dart';
-import 'package:madcamp_week4/screens/profile/profile.dart';
+import 'package:madcamp_week4/screens/maps/map_rank.dart';
+import 'package:madcamp_week4/screens/maps/user_rank.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 import '../utils/global_data.dart';
 
 // login
@@ -27,6 +27,7 @@ class _LoginButtonState extends State<LoginButton> {
 
   @override
   Widget build(BuildContext context) {
+
     return InkWell(
       onTap: () async {
         String email = widget.getEmail();
@@ -64,6 +65,7 @@ class _LoginButtonState extends State<LoginButton> {
           print('User Name: ${userData.user.name}');
 
           if (userData.loginSuccess) {
+
             Get.to(() => MyHomePage(user: userData.user, authToken: authToken,));
           } else {
             showToast();
@@ -123,7 +125,6 @@ class _LoginButtonState extends State<LoginButton> {
     );
   }
 }
-
 // navigate to signup page
 class GoToSignupButton extends StatelessWidget{
   const GoToSignupButton({Key? key}) : super(key: key);
@@ -282,34 +283,64 @@ class BackToLogin extends StatelessWidget{
 
 }
 
-class ProfileNavigationButton extends StatelessWidget {
-  const ProfileNavigationButton({Key? key, required this.info}) : super(key: key);
-  final String info;
+class GoToMapRanking extends StatelessWidget{
+  const GoToMapRanking({Key? key, required this.authToken}) : super(key: key);
+  final String authToken;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       splashColor: Colors.transparent,
       onTap: (){
-        Get.to(() => LoginView());
+        Get.to(() => MapRankView(authToken: authToken));
       },
       child: Container(
         alignment: Alignment.center,
+        width: 200,
         height: 45,
-        width: 150,
         decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(6),
+          color: GlobalColors.mainColor,
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(
-          info,
+        child: const Text(
+          'Map',
           style: TextStyle(
-            color: GlobalColors.mainColor,
+            color: Colors.white,
             fontWeight: FontWeight.w500,
           ),
         ),
       ),
     );
   }
+}
 
+class GoToUserRanking extends StatelessWidget{
+  const GoToUserRanking({Key? key, required this.authToken}) : super(key: key);
+  final String authToken;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      onTap: (){
+        Get.to(() => UserRankView(authToken: authToken));
+      },
+      child: Container(
+        alignment: Alignment.center,
+        width: 200,
+        height: 45,
+        decoration: BoxDecoration(
+          color: GlobalColors.mainColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text(
+          'User',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
 }
