@@ -26,6 +26,7 @@ const userSchema = mongoose.Schema({
     },
     profileImagePath: {
         type: String,
+        default: "profile_0",
     },
     role: {
         type: Number,
