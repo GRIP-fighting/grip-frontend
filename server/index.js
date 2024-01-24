@@ -11,18 +11,21 @@ require("dotenv").config();
 
 const config = require("./config/key.js"); // config 폴더에 있는 key.js를 가져온다.
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port);
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(
+    bodyParser.urlencoded({
+        limit: "50mb",
+        extended: true,
+        parameterLimit: 50000,
+    })
+);
+app.use(bodyParser.json({ limit: "50mb" }));
 app.use(cookieParser());
 
 const mongoose = require("mongoose");
-mongoose
-    .connect(config.mongoURI, {})
-    .then(() => console.log("MongoDB Connected..."))
-    .catch((err) => console.log(err));
-mongoose.set("debug", true);
+mongoose.connect(config.mongoURI, {}).catch((err) => console.log(err));
+// mongoose.set("debug", true);
 
 app.use("/api/users", usersRouter);
 app.use("/api/maps", mapsRouter);
