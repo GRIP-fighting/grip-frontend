@@ -4,6 +4,7 @@ import 'package:madcamp_week4/screens/maps/rank_main.dart';
 import 'package:madcamp_week4/screens/profile/profile.dart';
 import 'package:madcamp_week4/screens/splash_view.dart';
 import 'package:madcamp_week4/screens/upload/upload_main.dart';
+import 'package:madcamp_week4/screens/upload/upload_map.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
 import 'package:madcamp_week4/utils/global_data.dart';
 

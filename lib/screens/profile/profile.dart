@@ -7,11 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:madcamp_week4/screens/login/login.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
-import 'dart:io';
 import 'dart:async';
 import '../../utils/global_data.dart';
 import 'package:cross_file/cross_file.dart';
-import 'package:image/image.dart' as img;
 import 'package:http_parser/http_parser.dart';
 
 
@@ -25,8 +23,6 @@ class ProfileView extends StatefulWidget{
   late List<MapData> MyMaps;
 
   late final ImagePicker picker = ImagePicker();
-  late XFile? _image = null;
-
   Uint8List? _imageData;
 
   @override
@@ -775,15 +771,12 @@ class _ProfileViewState extends State<ProfileView> {
           }
         } else {
           print("Logout Error - Unexpected response format");
-          return null;
         }
       } else {
         print("Logout Error - Status Code: ${response.statusCode}");
-        return null;
       }
     } catch (e) {
       print("Logout Error: $e");
-      return null;
     }
   }
 
@@ -799,11 +792,9 @@ class _ProfileViewState extends State<ProfileView> {
             Get.to(() => LoginView());
       } else {
         print("Deleting Error - Status Code: ${response.statusCode}");
-        return null;
       }
     } catch (e) {
       print("Deleting Error: $e");
-      return null;
     }
   }
 
