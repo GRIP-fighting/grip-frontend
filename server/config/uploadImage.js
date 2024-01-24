@@ -10,7 +10,8 @@ const uploadImage = multer({
         bucket: config.BUCKET_NAME,
         contentType: multerS3.AUTO_CONTENT_TYPE,
         key: function (req, file, callback) {
-            callback(null, `${Date.now()}_${file.originalname}`);
+            const userId = req.user.userId;
+            callback(null, `profile_${userId}`);
         },
     }),
     limits: { fileSize: 1 * 1024 * 1024 },

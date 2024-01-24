@@ -120,16 +120,16 @@ router.get("/profileImage", auth, async (req, res) => {
         const imageData = await getImage(user.profileImagePath);
 
         // 테스트용
-        // const filePath = "./temp_image.jpeg";
-        // const saveBufferToFile = async (buffer) => {
-        //     try {
-        //         await fs.writeFile(filePath, buffer);
-        //         console.log(`File saved to ${filePath}`);
-        //     } catch (error) {
-        //         console.error("Error writing file:", error);
-        //     }
-        // };
-        // saveBufferToFile(imageData);
+        const filePath = "./temp_image.jpeg";
+        const saveBufferToFile = async (buffer) => {
+            try {
+                await fs.writeFile(filePath, buffer);
+                console.log(`File saved to ${filePath}`);
+            } catch (error) {
+                console.error("Error writing file:", error);
+            }
+        };
+        saveBufferToFile(imageData);
 
         // 전송용
         const contentType = imageData.headers["content-type"] || "image/jpeg";
