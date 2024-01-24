@@ -14,16 +14,14 @@ const uploadImage = multer({
             callback(null, `profile_${userId}`);
         },
     }),
-    limits: { fileSize: 1 * 1024 * 1024 },
 });
 
 const getImage = async (imageName) => {
     const params = {
-        Bucket: config.BUCKET_NAME, // Bucket 이름을 지정
-        Key: imageName, // 파일의 Key (파일 이름)
+        Bucket: config.BUCKET_NAME,
+        Key: imageName,
     };
     try {
-        // GetObjectCommand를 사용하여 객체를 가져옵니다.
         const command = new GetObjectCommand(params);
         const data = await s3.send(command);
         return data.Body;

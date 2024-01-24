@@ -98,8 +98,8 @@ router.patch(
     uploadImage.single("profileImage"),
     async (req, res) => {
         const user = req.user;
+        console.log("users-profileImage-save");
         try {
-            console.log(req.file.location);
             const imagePath = req.file.location.split("/").pop();
             user.profileImagePath = imagePath;
             await user.save();
@@ -113,31 +113,49 @@ router.patch(
     }
 );
 
-// 프로필 사진 가져오기
+// 자신의 프로필 사진 가져오기
 router.get("/profileImage", auth, async (req, res) => {
     const user = req.user;
     try {
         if (user.profileImagePath == "") {
             return res.status(404).send("profileImagePath not found");
         }
-        const imageData = await getImage(user.profileImagePath);
+        const imageData = await getImage(user.profileImagePath); //IncomingMessage
 
         // 테스트용
-        // const filePath = "./test.jpeg";
-        // const saveBufferToFile = async (buffer) => {
-        //     try {
-        //         await fs.writeFile(filePath, buffer);
-        //         console.log(`File saved to ${filePath}`);
-        //     } catch (error) {
-        //         console.error("Error writing file:", error);
-        //     }
-        // };
-        // saveBufferToFile(imageData);
+        const filePath = "./test.jpeg";
+        const saveBufferToFile = async (buffer) => {
+            try {
+                await fs.writeFile(filePath, buffer);
+                console.log(`File saved to ${filePath}`);
+            } catch (error) {
+                console.error("Error writing file:", error);
+            }
+        };
+        saveBufferToFile(imageData);
 
         // 전송용
-        const contentType = imageData.headers["content-type"] || "image/jpeg";
-        res.setHeader("Content-Type", contentType);
-        imageData.Body.pipe(res);
+        res.setHeader("Content-Type", "image/png");
+        imageData.pipe(res);
+    } catch (error) {
+        res.status(500).send("An error occurred");
+    }
+});
+
+// 프로필 사진 가져오기
+router.get("/profileImage/:userId", auth, async (req, res) => {
+    const userId = req.params.userId;
+    const user = await User.findOne({ userId: userId });
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            message: "사용자를 찾을 수 없습니다.",
+        });
+    }
+    try {
+        const imageData = await getImage(user.profileImagePath); //IncomingMessage
+        res.setHeader("Content-Type", "image/png");
+        imageData.pipe(res);
     } catch (error) {
         res.status(500).send("An error occurred");
     }
@@ -147,7 +165,6 @@ router.get("/profileImage", auth, async (req, res) => {
 router.get("/:userId", auth, async (req, res) => {
     try {
         const userId = req.params.userId;
-        // const user = req.user;
         const user = await User.findOne({ userId: userId });
         if (!user) {
             return res.status(404).json({
@@ -155,7 +172,6 @@ router.get("/:userId", auth, async (req, res) => {
                 message: "사용자를 찾을 수 없습니다.",
             });
         }
-        console.log(user);
         const likedMaps = await Map.find({ mapId: { $in: user.likedMapId } });
         const likedSolutions = await Solution.find({
             solutionId: { $in: user.likedSolutionId },
