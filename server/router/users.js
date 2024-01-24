@@ -6,7 +6,7 @@ const { User } = require("../models/User.js"); // 모델 스키마 가져오기
 const { Map } = require("../models/Map.js");
 const { Solution } = require("../models/Solution.js");
 const { Counter } = require("../models/Counter.js");
-const { uploadImage, getImage } = require("../config/uploadImage.js");
+const { uploadImage, getImage, getUrl } = require("../config/uploadImage.js");
 
 // 회원가입
 router.post("/register", async (req, res) => {
@@ -37,7 +37,10 @@ router.post("/login", async (req, res) => {
                 message: "비밀번호가 틀렸습니다.",
             });
         }
+
         const tokenUser = await user.generateToken();
+        tokenUser.profileImagePath = await getUrl(tokenUser.profileImagePath);
+
         res.cookie("x_auth", tokenUser.token)
             .status(200)
             .json({ loginSuccess: true, user: tokenUser });
@@ -82,10 +85,22 @@ router.delete("/", auth, async (req, res) => {
 router.get("/", auth, async (req, res) => {
     try {
         const users = await User.find({}).select("-password -token -__v");
-        return res.status(200).json({
-            success: true,
-            users: users,
-        });
+
+        try {
+            const updatedUsers = await Promise.all(
+                users.map(async (user) => {
+                    user.profileImagePath = await getUrl(user.profileImagePath);
+                    return user;
+                })
+            );
+            return res.status(200).json({
+                success: true,
+                users: updatedUsers,
+            });
+        } catch (error) {
+            console.error("Error updating users with signed URLs:", error);
+            throw error;
+        }
     } catch (error) {
         res.status(500).json({ success: false, error });
     }
@@ -156,6 +171,25 @@ router.get("/profileImage/:userId", auth, async (req, res) => {
         const imageData = await getImage(user.profileImagePath); //IncomingMessage
         res.setHeader("Content-Type", "image/png");
         imageData.pipe(res);
+    } catch (error) {
+        res.status(500).send("An error occurred");
+    }
+});
+
+// 프로필 사진 가져오기
+router.get("/profileImageUrl/:userId", auth, async (req, res) => {
+    const userId = req.params.userId;
+    const user = await User.findOne({ userId: userId });
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            message: "사용자를 찾을 수 없습니다.",
+        });
+    }
+    try {
+        const imageUrl = await getUrl(user.profileImagePath); //IncomingMessage
+        console.log(imageUrl);
+        res.status(200).send({ url: imageUrl });
     } catch (error) {
         res.status(500).send("An error occurred");
     }
