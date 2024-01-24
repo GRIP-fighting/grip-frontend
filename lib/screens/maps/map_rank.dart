@@ -7,10 +7,18 @@ import 'package:madcamp_week4/screens/maps/map_detail.dart';
 import '../../utils/global_colors.dart';
 import '../../utils/global_data.dart';
 
-class MapRankView extends StatelessWidget{
-  MapRankView({Key? key, required this.authToken}) : super(key: key);
-  late List<MapRankingData> maps;
+class MapRankView extends StatefulWidget{
+  MapRankView({Key? key, required this.authToken, required this.user}) : super(key: key);
   final String authToken;
+  final User user;
+
+  @override
+  State<MapRankView> createState() => _MapRankViewState();
+}
+
+class _MapRankViewState extends State<MapRankView> {
+  late List<MapRankingData> maps;
+
   // for auth
   Map<String, String> headers = {};
 
@@ -84,7 +92,14 @@ class MapRankView extends StatelessWidget{
                                     child: InkWell(
                                       onTap: () {
                                         print('ListTile clicked');
-                                        Get.to(() => MapDetailView(authToken: authToken, map: maps[index]));
+                                        Get.to(() => MapDetailView(authToken: widget.authToken, map: maps[index], user: widget.user))?.then(
+                                                (result){
+                                                  if (result != null && result is bool) {
+                                                    setState((){
+                                                      getMapData();
+                                                    });
+                                                  }
+                                        });
                                       },
                                       child: ListTile(
                                         leading: const Icon(Icons.keyboard_arrow_right_outlined),
@@ -112,7 +127,7 @@ class MapRankView extends StatelessWidget{
 
   Future<List<MapRankingData>?> getMapData() async {
     // set cookie
-    headers['cookie'] = "x_auth=$authToken";
+    headers['cookie'] = "x_auth=${widget.authToken}";
 
     try {
       final response = await http.get(Uri.parse('http://143.248.225.53:8000/api/maps'), headers: headers);

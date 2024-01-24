@@ -3,7 +3,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:madcamp_week4/screens/maps/rank_main.dart';
 import 'package:madcamp_week4/screens/profile/profile.dart';
 import 'package:madcamp_week4/screens/splash_view.dart';
-import 'package:madcamp_week4/screens/upload/upload_solutions.dart';
+import 'package:madcamp_week4/screens/upload/upload_main.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
 import 'package:madcamp_week4/utils/global_data.dart';
 
@@ -59,8 +59,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: IndexedStack(
           index: _currentIndex,
           children: [
-            UploadSolution(),
-            RankView(authToken: widget.authToken,),
+            UploadMain(authToken: widget.authToken, user: widget.user,),
+            RankView(authToken: widget.authToken, user: widget.user),
             ProfileView(user: widget.user, authToken: widget.authToken),
           ],
         ),
@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            label: 'upload solution',
+            label: 'upload',
             icon: Container(
               padding: const EdgeInsets.all(8.0),
               child: const Icon(Icons.file_upload_outlined),

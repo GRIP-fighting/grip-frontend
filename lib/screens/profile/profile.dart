@@ -1,11 +1,19 @@
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:madcamp_week4/screens/login/login.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
 import 'dart:io';
 import 'dart:async';
 import '../../utils/global_data.dart';
+import 'package:cross_file/cross_file.dart';
+import 'package:image/image.dart' as img;
+import 'package:http_parser/http_parser.dart';
+
 
 class ProfileView extends StatefulWidget{
   ProfileView({Key? key, required this.user, required this.authToken}) : super(key: key);
@@ -16,8 +24,10 @@ class ProfileView extends StatefulWidget{
   late List<LikedSolution> likedSolutions;
   late List<MapData> MyMaps;
 
-  late XFile? _image = null;
   late final ImagePicker picker = ImagePicker();
+  late XFile? _image = null;
+
+  Uint8List? _imageData;
 
   @override
   State<ProfileView> createState() => _ProfileViewState();
@@ -36,11 +46,17 @@ class _ProfileViewState extends State<ProfileView> {
   };
 
   @override
+  void initState() {
+    super.initState();
+    fetchImageData();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: GlobalColors.mainColor,
         elevation: 0,
         foregroundColor: Colors.white.withOpacity(0.4),
@@ -51,6 +67,62 @@ class _ProfileViewState extends State<ProfileView> {
           style: TextStyle(
             color: Colors.white,
           ),
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              decoration: BoxDecoration(
+                color: GlobalColors.mainColor,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+              ),
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: AssetImage('assets/avatar.jpeg'),
+                backgroundColor: Colors.white,
+              ),
+              accountName: Text(
+                widget.user.name,
+              ),
+              accountEmail: Text(
+                widget.user.email,
+              ),
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.logout_outlined,
+              color: GlobalColors.textColor,
+              ),
+              title: Text(
+                  'Logout',
+                style: TextStyle(
+                  color: GlobalColors.textColor,
+                ),
+              ),
+              onTap:(){
+                logout();
+              }
+            ),
+            ListTile(
+                leading: Icon(
+                  Icons.delete,
+                  color: GlobalColors.textColor,
+                ),
+                title: Text(
+                  'Delete account',
+                  style: TextStyle(
+                    color: GlobalColors.textColor,
+                  ),
+                ),
+                onTap:(){
+                  deleteAccount();
+                }
+            ),
+          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -64,16 +136,21 @@ class _ProfileViewState extends State<ProfileView> {
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: widget._image != null
-                          ? FileImage(File(widget._image!.path))
-                          : const AssetImage('assets/avatar.jpeg') as ImageProvider<Object>,
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: widget._imageData == null
+                          ? CircularProgressIndicator()
+                          : ClipOval(
+                              child: Image.memory(Uint8List.fromList(widget._imageData as List<int>), fit: BoxFit.fill,),
+                            ),
                     ),
                     InkWell(
                       onTap: (){
                         print('press Edit button');
-                        //Get.to(() => EditProfile());
                         getImage(ImageSource.gallery);
                       },
                       child: CircleAvatar(
@@ -667,12 +744,122 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
-  Future getImage(ImageSource imageSource) async {
-    final XFile? pickedFile = await widget.picker.pickImage(source: imageSource);
+  Future getImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+
     if (pickedFile != null) {
+      final List<int> imageData = await pickedFile.readAsBytes();
+
       setState(() {
-        widget._image = XFile(pickedFile.path);
+        widget._imageData = imageData as Uint8List?;
+        sendImageData();
       });
+    }
+  }
+
+  Future<void> logout() async{
+    // set cookie
+    headers['cookie'] = "x_auth=${widget.authToken}";
+
+    try {
+      final response = await http.get(Uri.parse('http://143.248.225.53:8000/api/users/logout'), headers: headers);
+      print("Logout Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        dynamic responseBody = json.decode(response.body);
+
+        if (responseBody is Map && responseBody.containsKey('success')) {
+          if(responseBody['success']){
+            Get.to(() => LoginView());
+          }
+        } else {
+          print("Logout Error - Unexpected response format");
+          return null;
+        }
+      } else {
+        print("Logout Error - Status Code: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      print("Logout Error: $e");
+      return null;
+    }
+  }
+
+  Future<void> deleteAccount() async{
+    // set cookie
+    headers['cookie'] = "x_auth=${widget.authToken}";
+
+    try {
+      final response = await http.delete(Uri.parse('http://143.248.225.53:8000/api/users/'), headers: headers);
+      print("Deleting Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+            Get.to(() => LoginView());
+      } else {
+        print("Deleting Error - Status Code: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      print("Deleting Error: $e");
+      return null;
+    }
+  }
+
+  Future<void> fetchImageData() async {
+    // set cookie
+    headers['cookie'] = "x_auth=${widget.authToken}";
+
+    try {
+      final response = await http.get(Uri.parse('http://143.248.225.53:8000/api/users/profileImage'), headers: headers);
+      if (response.statusCode == 200) {
+        setState(() {
+          widget._imageData = response.bodyBytes;
+        });
+      } else {
+        print('Failed to load image');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> sendImageData() async {
+    try {
+      var request = http.MultipartRequest(
+        'PATCH',
+        Uri.parse('http://143.248.225.53:8000/api/users/profileImage'),
+      );
+
+      // Add the image data as a file part
+      request.files.add(http.MultipartFile.fromBytes(
+        'profileImage',
+        widget._imageData!,
+        filename: 'image.jpg',
+        contentType: MediaType('image', 'jpeg'),
+      ));
+
+      // set cookie
+      request.headers['cookie'] = "x_auth=${widget.authToken}";
+
+      // Send the request
+      var response = await request.send();
+
+      // Read response
+      var responseData = await http.Response.fromStream(response);
+
+      if (response.statusCode == 200) {
+        print('Successfully uploaded the image');
+        return json.decode(responseData.body);
+      } else {
+        print('Failed to upload image. Status code: ${response.statusCode}');
+        print(responseData.body);
+        throw Exception('Failed to upload image');
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+      throw Exception('Error uploading image');
     }
   }
 }

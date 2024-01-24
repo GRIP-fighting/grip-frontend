@@ -46,6 +46,9 @@ dependencies:
   jwt_decode: ^0.3.1
   flutter_secure_storage: ^8.0.0
   image_picker: ^1.0.5
+  path_provider: ^2.1.2
+  cross_file: ^0.3.3+8
+  image: ^4.1.4
 
 dev_dependencies:
   flutter_test:

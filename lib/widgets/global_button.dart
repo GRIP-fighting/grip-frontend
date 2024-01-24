@@ -8,9 +8,10 @@ import 'package:madcamp_week4/screens/login/login.dart';
 import 'package:madcamp_week4/screens/login/signup.dart';
 import 'package:madcamp_week4/screens/maps/map_rank.dart';
 import 'package:madcamp_week4/screens/maps/user_rank.dart';
+import 'package:madcamp_week4/screens/upload/upload_map.dart';
+import 'package:madcamp_week4/screens/upload/upload_solution.dart';
 import 'package:madcamp_week4/utils/global_colors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../screens/profile/profile.dart';
 import '../utils/global_data.dart';
 
 // login
@@ -285,15 +286,16 @@ class BackToLogin extends StatelessWidget{
 }
 
 class GoToMapRanking extends StatelessWidget{
-  const GoToMapRanking({Key? key, required this.authToken}) : super(key: key);
+  const GoToMapRanking({Key? key, required this.authToken, required this.user}) : super(key: key);
   final String authToken;
+  final User user;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       splashColor: Colors.transparent,
       onTap: (){
-        Get.to(() => MapRankView(authToken: authToken));
+        Get.to(() => MapRankView(authToken: authToken, user: user));
       },
       child: Container(
         alignment: Alignment.center,
@@ -336,6 +338,70 @@ class GoToUserRanking extends StatelessWidget{
         ),
         child: const Text(
           'User',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class GoToMapUpload extends StatelessWidget{
+  const GoToMapUpload({Key? key, required this.authToken, required this.user}) : super(key: key);
+  final String authToken;
+  final User user;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      onTap: (){
+        Get.to(() => UploadMap(authToken: authToken, user: user));
+      },
+      child: Container(
+        alignment: Alignment.center,
+        width: 200,
+        height: 45,
+        decoration: BoxDecoration(
+          color: GlobalColors.mainColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text(
+          'Map',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class GoToSolUpload extends StatelessWidget{
+  const GoToSolUpload({Key? key, required this.authToken, required this.user}) : super(key: key);
+  final String authToken;
+  final User user;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      onTap: (){
+        Get.to(() => UploadSolution(authToken: authToken, user: user));
+      },
+      child: Container(
+        alignment: Alignment.center,
+        width: 200,
+        height: 45,
+        decoration: BoxDecoration(
+          color: GlobalColors.mainColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text(
+          'Solution',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w500,

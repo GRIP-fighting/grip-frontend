@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
+import 'package:madcamp_week4/screens/maps/user_detail.dart';
 import '../../utils/global_colors.dart';
 import '../../utils/global_data.dart';
 
@@ -69,12 +72,19 @@ class UserRankView extends StatelessWidget{
                                       color: GlobalColors.textColor.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: ListTile(
-                                      leading: const Icon(Icons.keyboard_arrow_right_outlined),
-                                      title: Text("${index+1}. ${_users[index].name}"),
-                                      subtitle: Text('Score: ${_users[index].score}\n'
-                                          'got ${_users[index].liked} Likes'),
-                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        print('ListTile clicked');
+                                        Get.to(() => UserDetailView(authToken: authToken, user: _users[index]));
+                                      },
+                                      child: ListTile(
+                                        leading: const Icon(Icons.keyboard_arrow_right_outlined),
+                                        title: Text("${index+1}. ${_users[index].name}"),
+                                        subtitle: Text('Score: ${_users[index].score}\n'
+                                            'got ${_users[index].liked} Likes'),
+                                      ),
+                                    )
+
                                   );
                                 },
                               );

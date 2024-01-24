@@ -254,6 +254,7 @@ class MapRankingData {
   final String mapPath;
   final int level;
   final int liked;
+  List<int> likedUserId;
   final List<int> designer;
   final List<int> solutionId;
   final int mapId;
@@ -264,6 +265,7 @@ class MapRankingData {
     required this.mapPath,
     required this.level,
     required this.liked,
+    required this.likedUserId,
     required this.designer,
     required this.solutionId,
     required this.mapId,
@@ -276,6 +278,7 @@ class MapRankingData {
       mapPath: json['mapPath'] ?? '',
       level: json['level'] ?? 0,
       liked: json['liked'] ?? 0,
+      likedUserId: List<int>.from(json['likedUserId']),
       designer: (json['designer'] as List<dynamic>).cast<int>(),
       solutionId: (json['solutionId'] as List<dynamic>).cast<int>(),
       mapId: json['mapId'] ?? 0,
