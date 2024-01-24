@@ -24,6 +24,9 @@ const userSchema = mongoose.Schema({
         type: String,
         minlength: 5,
     },
+    profileImagePath: {
+        type: String,
+    },
     role: {
         type: Number,
         default: 0, // 0은 일반 유저, 1은 관리자
@@ -56,7 +59,6 @@ const userSchema = mongoose.Schema({
             type: Number, // 또는 Integer로 변경
         },
     ],
-
     token: {
         type: String,
     },

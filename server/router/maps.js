@@ -104,20 +104,20 @@ router.delete("/:mapId/delete", auth, async (req, res) => {
 router.patch("/:mapId/liked", auth, async (req, res) => {
     const user = req.user;
     const mapId = req.params.mapId;
-
     try {
         const map = await Map.findOne({ mapId: mapId });
-
         if (!user || !map) {
             return res.status(404).send("User or Map not found");
         }
         if (!user.likedMapId.includes(mapId)) {
             map.liked = map.liked + 1;
+            map.likedUserId.push(user.userId);
             await map.save();
             user.likedMapId.push(mapId);
             await user.save();
         } else {
             map.liked = map.liked - 1;
+            map.likedUserId.pull(user.userId);
             await map.save();
             user.likedMapId.pull(mapId);
             await user.save();

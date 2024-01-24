@@ -10,6 +10,7 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const config = require("./config/key.js"); // config 폴더에 있는 key.js를 가져온다.
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 app.use(bodyParser.urlencoded({ extended: true }));

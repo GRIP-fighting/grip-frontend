@@ -1,10 +1,12 @@
 var express = require("express");
 var router = express.Router();
+const fs = require("fs").promises;
 const { auth } = require("../middleware/auth.js");
 const { User } = require("../models/User.js"); // 모델 스키마 가져오기
 const { Map } = require("../models/Map.js");
 const { Solution } = require("../models/Solution.js");
 const { Counter } = require("../models/Counter.js");
+const { uploadImage, getImage } = require("../config/uploadImage.js");
 
 // 회원가입
 router.post("/register", async (req, res) => {
@@ -88,6 +90,65 @@ router.get("/", auth, async (req, res) => {
         res.status(500).json({ success: false, error });
     }
 });
+
+// 프로필 사진 저장
+router.patch(
+    "/profileImage",
+    auth,
+    uploadImage.single("profileImage"),
+    async (req, res) => {
+        const user = req.user;
+        try {
+            console.log(req.file.location);
+            const imagePath = req.file.location.split("/").pop();
+            user.profileImagePath = imagePath;
+            await user.save();
+            res.status(200).send({
+                success: true,
+                user: user,
+            });
+        } catch (error) {
+            res.status(500).send("An error occurred");
+        }
+    }
+);
+
+// 프로필 사진 가져오기
+router.get("/profileImage", auth, async (req, res) => {
+    const user = req.user;
+    try {
+        const imageData = await getImage(user.profileImagePath);
+
+        // 테스트용
+        // const filePath = "./temp_image.jpeg";
+        // const saveBufferToFile = async (buffer) => {
+        //     try {
+        //         await fs.writeFile(filePath, buffer);
+        //         console.log(`File saved to ${filePath}`);
+        //     } catch (error) {
+        //         console.error("Error writing file:", error);
+        //     }
+        // };
+        // saveBufferToFile(imageData);
+
+        // 전송용
+        const contentType = imageData.headers["content-type"] || "image/jpeg";
+        res.setHeader("Content-Type", contentType);
+        imageData.Body.pipe(res);
+    } catch (error) {
+        res.status(500).send("An error occurred");
+    }
+});
+
+// bringImage: async (req, res) => {
+//     console.log("bringImage started");
+//     const imageName = req.body.path;
+//     const imagePath = path.join(__dirname, "../../images/" + imageName);
+//     // res.sendFile(imagePath);
+//     const imageUrl = "http://" + req.headers.host + "../../images/" + imageName;
+//     res.json({ url: imageUrl });
+//   },
+// };
 
 // 특정 유저 디테일 가져오기
 router.get("/:userId", auth, async (req, res) => {
