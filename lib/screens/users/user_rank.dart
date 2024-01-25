@@ -20,31 +20,37 @@ class UserRankView extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: GlobalColors.mainColor,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         backgroundColor: GlobalColors.mainColor,
         elevation: 0,
         foregroundColor: Colors.white.withOpacity(0.4),
-        centerTitle: true,
-        title: const Text(
-          'User Ranking',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Container(
             child: Column(
               children: [
+                const Text(
+                  'The most popular users at a glance!',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 8,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
                 Container(
                   margin: const EdgeInsets.all(10),
                   padding: const EdgeInsets.all(10),
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: GlobalColors.textColor.withOpacity(0.1),
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: SingleChildScrollView(
@@ -69,7 +75,7 @@ class UserRankView extends StatelessWidget{
                                 itemCount: _users.length,
                                 itemBuilder: (context, index) {
                                   final user = _users[index];
-                                  Color borderColor = Colors.transparent; // 기본값 설정
+                                  Color borderColor = Colors.white; // 기본값 설정
                                   if (index == 0) {
                                     borderColor = Color(0xFFD6B534); // 첫 번째 아이템에는 금색
                                   } else if (index == 1) {

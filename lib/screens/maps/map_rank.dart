@@ -112,6 +112,7 @@ class _MapRankViewState extends State<MapRankView> {
                                               print('ListTile clicked');
                                               Get.to(() => MapDetailView(authToken: widget.authToken, map: map, user: widget.user))?.then(
                                                     (result) {
+                                                      print('result: $result');
                                                   if (result != null && result is bool) {
                                                     setState(() {
                                                       getMapData();

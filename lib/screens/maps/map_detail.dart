@@ -36,13 +36,12 @@ class _MapDetailViewState extends State<MapDetailView> {
               icon: isLiked
                   ? const Icon(Icons.favorite, color: Colors.red)
                   : const Icon(Icons.favorite_border),
-              onPressed: () {
-                setState(() async {
-                  setState(() {
-                    isLiked = !isLiked;
-                  });
-                  await updateLikedStatus(widget.map.mapId);
+              onPressed: () async {
+                setState(() {
+                  isLiked = !isLiked;
+                  updateLikedStatus(widget.map.mapId);
                 });
+
               },
           ),
         ],
