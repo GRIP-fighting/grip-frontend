@@ -69,22 +69,22 @@ class UserRankView extends StatelessWidget{
                                 itemCount: _users.length,
                                 itemBuilder: (context, index) {
                                   final user = _users[index];
-                                  Color borderColor;
+                                  Color borderColor = Colors.transparent; // 기본값 설정
                                   if (index == 0) {
-                                    borderColor = Colors.yellow; // 첫 번째 아이템에는 금색
+                                    borderColor = Color(0xFFD6B534); // 첫 번째 아이템에는 금색
                                   } else if (index == 1) {
-                                    borderColor = Colors.grey; // 두 번째 아이템에는 은색
+                                    borderColor = Color(0xFFC0C0C0); // 두 번째 아이템에는 은색
                                   } else if (index == 2) {
-                                    borderColor = Colors.brown; // 세 번째 아이템에는 동색
-                                  } else {
-                                    borderColor = Colors.transparent; // 나머지 아이템에는 테두리 없음
+                                    borderColor = Color(0xFFCD7F32); // 세 번째 아이템에는 동색
                                   }
                                   return Container(
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: borderColor),
-                                        borderRadius: BorderRadius.circular(4.0), // 원하는 만큼의 둥근 테두리
+                                        color: borderColor, // 전체 배경 색상 설정
+                                        borderRadius: BorderRadius.circular(20.0), // 둥근 테두리 더 둥글게 설정
                                       ),
                                       margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 목록의 각 항목 간격 조정
+                                      padding: EdgeInsets.symmetric(horizontal: 16.0), // 좌우 내부 패딩 조정
+                                      // 목록의 각 항목 간격 조정
                                   child: ListTile(
                                       leading: FutureBuilder<String>(
 
