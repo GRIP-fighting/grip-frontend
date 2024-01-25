@@ -161,7 +161,8 @@ class UploadMap extends StatelessWidget{
                           const SizedBox(height: 10,),
                           GlobalTextForm(controller: levelController, text: '', textInputType: TextInputType.text, obscure: false),
                           const SizedBox(height: 10,),
-                          UploadMapButton(authToken: authToken, user: user, getName: () => nameText, getPath: () => pathText, getLevel: () => levelText)
+                          UploadMapButton(authToken: authToken, user: user, getName: () => nameText, getPath: () => pathText, getLevel: () => levelText),
+                          const SizedBox(height: 5,),
                         ],
                       ),
                     ],

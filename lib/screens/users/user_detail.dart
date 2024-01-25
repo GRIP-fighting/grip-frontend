@@ -1,13 +1,24 @@
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:madcamp_week4/widgets/global_button.dart';
 import '../../utils/global_colors.dart';
 import '../../utils/global_data.dart';
 
-class UserDetailView extends StatelessWidget {
+class UserDetailView extends StatefulWidget {
   UserDetailView({Key? key, required this.authToken, required this.user,})
       : super(key: key);
   final String authToken;
   late final UserRankingData user;
+
+  @override
+  State<UserDetailView> createState() => _UserDetailViewState();
+}
+
+class _UserDetailViewState extends State<UserDetailView> {
+  // for auth
+  Map<String, String> headers = {};
+
+  Uint8List? _imageData;
 
   // image widgets
   final double coverHeight = 200;
@@ -24,11 +35,17 @@ class UserDetailView extends StatelessWidget {
   );
 
   Widget buildProfileImage () => CircleAvatar(
-    backgroundColor: GlobalColors.textColor.withOpacity(0.1),
     radius: profileHeight,
-    backgroundImage: const AssetImage(
-        'assets/avatar.jpeg',
-    ),
+    child: _imageData == null
+        ? CircularProgressIndicator()
+        : ClipOval(
+            child: Image.memory(
+              Uint8List.fromList(_imageData as List<int>),
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
   );
 
   Widget buildTop() {
@@ -75,7 +92,7 @@ class UserDetailView extends StatelessWidget {
               ),
             ),
             Text(
-              '${user.score}',
+              '${widget.user.score}',
               style: TextStyle(
                 color: GlobalColors.textColor,
                 fontSize: 16,
@@ -89,6 +106,10 @@ class UserDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if(_imageData == null){
+      fetchImageData();
+    }
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -100,7 +121,7 @@ class UserDetailView extends StatelessWidget {
           children: <Widget>[
             buildTop(),
             Text(
-                user.name,
+                widget.user.name,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 23,
@@ -108,7 +129,7 @@ class UserDetailView extends StatelessWidget {
               ),
             ),
             Text(
-              user.email,
+              widget.user.email,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 16,
@@ -131,7 +152,23 @@ class UserDetailView extends StatelessWidget {
           ],
         ),
     );
+  }
 
+  Future<void> fetchImageData() async {
+    // set cookie
+    headers['cookie'] = "x_auth=${widget.authToken}";
 
+    try {
+      final response = await http.get(Uri.parse('http://143.248.225.53:8000/api/users/profileImage/${widget.user.userId}'), headers: headers);
+      if (response.statusCode == 200) {
+        setState(() {
+          _imageData = response.bodyBytes;
+        });
+      } else {
+        print('Failed to load image');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 }
