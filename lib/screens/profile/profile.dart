@@ -228,7 +228,7 @@ class _ProfileViewState extends State<ProfileView> {
                       width: 300,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white,
                       ),
                       padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10,),
                       child: Row(
@@ -258,7 +258,7 @@ class _ProfileViewState extends State<ProfileView> {
                       width: 300,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white,
                       ),
                       padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10,),
                       child: Row(
@@ -288,7 +288,7 @@ class _ProfileViewState extends State<ProfileView> {
                       width: 300,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white,
                       ),
                       padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10,),
                       child: Row(
@@ -445,6 +445,7 @@ class _ProfileViewState extends State<ProfileView> {
                         const SizedBox(width: 10,),
                       ],
                     ),
+                    const SizedBox(height: 10,),
                     // visibility for my maps
                     Visibility(
                       visible: containerVisibility['myMaps']!,

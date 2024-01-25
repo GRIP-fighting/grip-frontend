@@ -76,7 +76,7 @@ class _MapRankViewState extends State<MapRankView> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10,),
+                          const SizedBox(height: 20,),
                           FutureBuilder<List<MapRankingData>?>(
                             future: getMapData(),
                             builder: (context, snapshot) {
@@ -102,6 +102,8 @@ class _MapRankViewState extends State<MapRankView> {
                                     return Builder(
                                       builder: (BuildContext context) {
                                         return Container(
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50,),
                                           margin: const EdgeInsets.all(5),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
@@ -121,10 +123,29 @@ class _MapRankViewState extends State<MapRankView> {
                                                 },
                                               );
                                             },
-                                            child: ListTile(
-                                              leading: const Icon(Icons.keyboard_arrow_right_outlined),
-                                              title: Text("${maps.indexOf(map) + 1}. ${map.mapName}"),
-                                              subtitle: Text('Level: ${map.level}\n${map.liked} Likes'),
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: GlobalColors.mainColor,
+                                                    borderRadius: BorderRadius.circular(90),
+                                                  ),
+                                                  height: 50,
+                                                  width: double.infinity,
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    "${maps.indexOf(map) + 1}. ${map.mapName}",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20,
+                                                    ),
+                                                  ),
+                                                ),
+                                                ListTile(
+                                                  leading: const Icon(Icons.keyboard_arrow_right_outlined),
+                                                  title: Text('Level: ${map.level}\n${map.liked} Likes'),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         );
