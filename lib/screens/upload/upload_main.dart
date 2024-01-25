@@ -11,20 +11,6 @@ class UploadMain extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: GlobalColors.mainColor,
-        elevation: 0,
-        foregroundColor: Colors.white.withOpacity(0.4),
-        centerTitle: true,
-        title: const Text(
-          'Upload',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-      ),
       body: Center(
         child: SafeArea(
           child: Container(
