@@ -7,7 +7,7 @@ import 'package:madcamp_week4/main.dart';
 import 'package:madcamp_week4/screens/login/login.dart';
 import 'package:madcamp_week4/screens/login/signup.dart';
 import 'package:madcamp_week4/screens/maps/map_rank.dart';
-import 'package:madcamp_week4/screens/maps/user_rank.dart';
+import 'package:madcamp_week4/screens/users/user_rank.dart';
 import 'package:madcamp_week4/screens/upload/upload_main.dart';
 import 'package:madcamp_week4/screens/upload/upload_map.dart';
 import 'package:madcamp_week4/screens/upload/upload_solution.dart';
