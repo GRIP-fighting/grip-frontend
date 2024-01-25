@@ -468,7 +468,88 @@ class UploadMapButton extends StatelessWidget{
   Future<bool> sendMapData(String name, String path, int level, int designerId) async{
     dynamic data = {'mapName': name, 'mapPath': path, 'level': level, 'designer': designerId};
     String jsonString = jsonEncode(data);
-    print('signup data: $jsonString');
+    print('sendMap data: $jsonString');
+
+    try {
+      final response = await http.post(Uri.parse('http://143.248.225.53:8000/api/maps'),
+          headers: {"Content-Type": "application/json"}, body: jsonString);
+      print("Response status code: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      // check whether upload success
+      if (response.statusCode == 200) {
+        dynamic responseBody = jsonDecode(response.body);
+        return responseBody['success'] ?? false;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print("Error: $e");
+      return false;
+    }
+  }
+
+  void showToast(String msg){
+    Fluttertoast.showToast(
+      msg: msg,
+    );
+  }
+}
+
+class UploadSolButton extends StatelessWidget{
+  const UploadSolButton({Key? key, required this.authToken, required this.user, required this.getId, required this.getPath, }) : super(key: key);
+  final String authToken;
+  final User user;
+  final Function() getId;
+  final Function() getPath;
+
+  @override
+  Widget build(BuildContext context) {
+    bool isSuccess;
+
+    return InkWell(
+      splashColor: Colors.transparent,
+      onTap: () async {
+        String id = getId();
+        String path = getPath();
+
+        isSuccess = await sendSolData(int.parse(id), path);
+        if(isSuccess){
+          showToast('Upload Successed!');
+          Get.to(() => UploadMain(authToken: authToken, user: user,));
+        }
+        else{
+          showToast('Upload Failed');
+        }
+      },
+      child: Container(
+        alignment: Alignment.center,
+        height: 45,
+        decoration: BoxDecoration(
+          color: GlobalColors.mainColor,
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: const Text(
+          'Upload',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<bool> sendSolData(int id, String path) async{
+    dynamic data = {'mapId': id, 'mapPath': path};
+    String jsonString = jsonEncode(data);
+    print('sendSolData data: $jsonString');
 
     try {
       final response = await http.post(Uri.parse('http://143.248.225.53:8000/api/maps'),
