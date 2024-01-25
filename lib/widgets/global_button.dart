@@ -307,7 +307,7 @@ class GoToMapRanking extends StatelessWidget{
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Text(
-          'Map',
+          'Map Ranking',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w500,
@@ -338,7 +338,7 @@ class GoToUserRanking extends StatelessWidget{
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Text(
-          'User',
+          'User Ranking',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w500,
@@ -370,7 +370,7 @@ class GoToMapUpload extends StatelessWidget{
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Text(
-          'Map',
+          'Upload Map',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w500,
@@ -402,7 +402,7 @@ class GoToSolUpload extends StatelessWidget{
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Text(
-          'Solution',
+          'Upload Solution',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w500,
