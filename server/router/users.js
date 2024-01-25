@@ -206,6 +206,7 @@ router.get("/:userId", auth, async (req, res) => {
                 message: "사용자를 찾을 수 없습니다.",
             });
         }
+        const imageData = await getUrl(user.profileImagePath); //IncomingMessage
         const likedMaps = await Map.find({ mapId: { $in: user.likedMapId } });
         const likedSolutions = await Solution.find({
             solutionId: { $in: user.likedSolutionId },
@@ -216,6 +217,8 @@ router.get("/:userId", auth, async (req, res) => {
         });
         res.status(200).json({
             success: true,
+            user: user,
+            imageUrl: imageData,
             likedMaps: likedMaps,
             likedSolutions: likedSolutions,
             maps: maps,

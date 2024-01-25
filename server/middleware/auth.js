@@ -3,7 +3,7 @@ const { User } = require("../models/User");
 let auth = async (req, res, next) => {
     let token = req.cookies.x_auth;
 
-    const user = await User.findOne({ userId: 1 });
+    const user = await User.findOne({ userId: 4 });
     req.user = user;
     next();
 
