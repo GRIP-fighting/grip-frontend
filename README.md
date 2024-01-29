@@ -14,12 +14,10 @@
 ---
 
 - 김선희
-    
-    [sunnygeem - Overview](https://github.com/sunnygeem)
+    <a href="https://github.com/sunnygeem" target="_blank"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=blue"></a>
     
 - 강승완
-    
-    [albertruaz - Overview](https://github.com/albertruaz)
+    <a href="https://github.com/albertruaz" target="_blank"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=blue"></a>
     
 
 # 개발 환경
