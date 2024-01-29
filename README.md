@@ -25,9 +25,9 @@
 # 개발 환경
 
 ---
-
-| Back-end | Node JS, JavaScript, AWS ec2/s3 |
+| - | stack |
 | --- | --- |
+| Back-end | Node JS, JavaScript, AWS ec2/s3 |
 | Front-end | Flutter, Dart |
 
 
