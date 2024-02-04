@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:madcamp_week4/utils/global_colors.dart';
 import 'package:madcamp_week4/widgets/global_button.dart';
 import 'package:madcamp_week4/widgets/global_text_form.dart';
+import '../../util/global_colors.dart';
 
 
 class LoginView extends StatelessWidget{
@@ -70,7 +70,7 @@ class LoginView extends StatelessWidget{
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    GoToSignupButton(),
+                    const GoToSignupButton(),
                   ],
                 ),
               ],

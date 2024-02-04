@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../utils/global_colors.dart';
-import '../../utils/global_data.dart';
+import '../../models/global_data.dart';
+import '../../util/global_colors.dart';
 import '../../widgets/global_button.dart';
 import '../../widgets/global_text_form.dart';
 

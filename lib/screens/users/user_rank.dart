@@ -1,13 +1,12 @@
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:madcamp_week4/screens/users/user_detail.dart';
-import '../../utils/global_colors.dart';
-import '../../utils/global_data.dart';
+
+import '../../models/global_data.dart';
+import '../../util/global_colors.dart';
 
 class UserRankView extends StatelessWidget{
   UserRankView({Key? key, required this.authToken}) : super(key: key);

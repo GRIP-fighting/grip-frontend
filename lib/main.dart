@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:madcamp_week4/screens/maps/rank_main.dart';
-import 'package:madcamp_week4/screens/profile/profile.dart';
-import 'package:madcamp_week4/screens/splash_view.dart';
-import 'package:madcamp_week4/screens/upload/upload_main.dart';
-import 'package:madcamp_week4/screens/upload/upload_map.dart';
-import 'package:madcamp_week4/utils/global_colors.dart';
-import 'package:madcamp_week4/utils/global_data.dart';
+
+import 'screens/rank_main.dart';
+import 'screens/profile/profile.dart';
+import 'screens/upload_main.dart';
+import 'util/global_colors.dart';
+import 'screens/splash_view.dart';
+import 'models/global_data.dart';
 
 void main() {
   runApp(

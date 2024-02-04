@@ -3,17 +3,18 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:madcamp_week4/main.dart';
-import 'package:madcamp_week4/screens/login/login.dart';
-import 'package:madcamp_week4/screens/login/signup.dart';
-import 'package:madcamp_week4/screens/maps/map_rank.dart';
-import 'package:madcamp_week4/screens/users/user_rank.dart';
-import 'package:madcamp_week4/screens/upload/upload_main.dart';
-import 'package:madcamp_week4/screens/upload/upload_map.dart';
-import 'package:madcamp_week4/screens/upload/upload_solution.dart';
-import 'package:madcamp_week4/utils/global_colors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../utils/global_data.dart';
+
+import '../main.dart';
+import '../models/global_data.dart';
+import '../screens/login/login.dart';
+import '../screens/login/signup.dart';
+import '../screens/maps/map_rank.dart';
+import '../screens/upload_main.dart';
+import '../screens/upload/upload_map.dart';
+import '../screens/upload/upload_solution.dart';
+import '../screens/users/user_rank.dart';
+import '../util/global_colors.dart';
 
 // login
 class LoginButton extends StatefulWidget{
@@ -576,3 +577,4 @@ class UploadSolButton extends StatelessWidget{
     );
   }
 }
+

@@ -1,8 +1,9 @@
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import '../../utils/global_colors.dart';
-import '../../utils/global_data.dart';
+
+import '../../models/global_data.dart';
+import '../../util/global_colors.dart';
 
 class UserDetailView extends StatefulWidget {
   UserDetailView({Key? key, required this.authToken, required this.user,})

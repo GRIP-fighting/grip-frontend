@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:madcamp_week4/utils/global_data.dart';
-import '../../utils/global_colors.dart';
 import 'package:http/http.dart' as http;
+
+import '../../models/global_data.dart';
+import '../../util/global_colors.dart';
 
 class MapDetailView extends StatefulWidget{
   MapDetailView({Key? key, required this.authToken, required this.map, required this.user}) : super(key: key);
@@ -49,7 +48,7 @@ class _MapDetailViewState extends State<MapDetailView> {
           onTap: (){
             Get.back(result: isLiked);
           },
-          child: Icon(Icons.arrow_back),
+          child: const Icon(Icons.arrow_back),
         ),
       ),
       body: GestureDetector(

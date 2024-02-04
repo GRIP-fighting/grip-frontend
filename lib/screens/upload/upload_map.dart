@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:madcamp_week4/utils/global_colors.dart';
-import 'package:madcamp_week4/widgets/global_button.dart';
-import 'package:madcamp_week4/widgets/global_text_form.dart';
 
-import '../../utils/global_data.dart';
+import '../../models/global_data.dart';
+import '../../util/global_colors.dart';
+import '../../widgets/global_button.dart';
+import '../../widgets/global_text_form.dart';
 
 class UploadMap extends StatelessWidget{
   UploadMap({Key? key, required this.authToken, required this.user}) : super(key: key);

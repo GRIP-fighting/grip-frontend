@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../utils/global_colors.dart';
-import '../../utils/global_data.dart';
-import '../../widgets/global_button.dart';
+import 'package:madcamp_week4/widgets/global_button.dart';
 
-class UploadMain extends StatelessWidget{
-  UploadMain({Key? key, required this.authToken, required this.user}) : super(key: key);
+import '../models/global_data.dart';
+
+class RankView extends StatelessWidget{
+  const RankView({Key? key, required this.authToken, required this.user}) : super(key: key);
   final String authToken;
   final User user;
 
@@ -24,9 +24,9 @@ class UploadMain extends StatelessWidget{
                   'assets/logo.png',
                   fit: BoxFit.contain,
                 ),
-                GoToMapUpload(authToken: authToken, user: user),
+                GoToMapRanking(authToken: authToken, user: user),
                 const SizedBox(height: 10,),
-                GoToSolUpload(authToken: authToken, user: user),
+                GoToUserRanking(authToken: authToken),
               ],
             ),
           ),

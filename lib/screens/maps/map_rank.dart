@@ -3,10 +3,11 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:madcamp_week4/screens/maps/map_detail.dart';
-import '../../utils/global_colors.dart';
-import '../../utils/global_data.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+
+import '../../models/global_data.dart';
+import '../../util/global_colors.dart';
+import 'map_detail.dart';
 
 class MapRankView extends StatefulWidget{
   MapRankView({Key? key, required this.authToken, required this.user}) : super(key: key);
@@ -88,7 +89,7 @@ class _MapRankViewState extends State<MapRankView> {
                                 return const Text("No data available.");
                               } else {
                                 List<MapRankingData> maps = snapshot.data!;
-
+                                // liked 기준 내림차순 정렬
                                 maps.sort((a, b) => b.liked.compareTo(a.liked));
                                 return CarouselSlider(
                                   options: CarouselOptions(
@@ -103,7 +104,7 @@ class _MapRankViewState extends State<MapRankView> {
                                       builder: (BuildContext context) {
                                         return Container(
                                           alignment: Alignment.center,
-                                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50,),
+                                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 50,),
                                           margin: const EdgeInsets.all(5),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
@@ -112,6 +113,7 @@ class _MapRankViewState extends State<MapRankView> {
                                           child: InkWell(
                                             onTap: () {
                                               print('ListTile clicked');
+                                              // MapDetailView에서 수행한 일을 반영하기 위한 과정
                                               Get.to(() => MapDetailView(authToken: widget.authToken, map: map, user: widget.user))?.then(
                                                     (result) {
                                                       print('result: $result');
@@ -135,7 +137,7 @@ class _MapRankViewState extends State<MapRankView> {
                                                   alignment: Alignment.center,
                                                   child: Text(
                                                     "${maps.indexOf(map) + 1}. ${map.mapName}",
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 20,
                                                     ),

@@ -5,12 +5,13 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:madcamp_week4/screens/login/login.dart';
-import 'package:madcamp_week4/screens/maps/map_detail.dart';
-import 'package:madcamp_week4/utils/global_colors.dart';
 import 'dart:async';
-import '../../utils/global_data.dart';
 import 'package:http_parser/http_parser.dart';
+
+import '../../models/global_data.dart';
+import '../../util/global_colors.dart';
+import '../login/login.dart';
+import '../maps/map_detail.dart';
 
 
 class ProfileView extends StatefulWidget{
@@ -30,7 +31,7 @@ class ProfileView extends StatefulWidget{
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  // for auth
+  // for auth (cookie)
   Map<String, String> headers = {};
 
   // type casting
@@ -62,7 +63,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  // track visibility
+  // track visibility: profile screen에서 클릭했을 때 보이는 section 결정
   Map<String, bool> containerVisibility = {
     'myMaps': false,
     'mySolutions': false,
@@ -76,10 +77,9 @@ class _ProfileViewState extends State<ProfileView> {
     fetchImageData();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    if(widget._imageData == null){
+    if(widget._imageData == null){ // image 깜빡거림 해결
       fetchImageData();
     }
 
@@ -109,7 +109,7 @@ class _ProfileViewState extends State<ProfileView> {
                   shape: BoxShape.circle,
                 ),
                 child: widget._imageData == null
-                    ? CircularProgressIndicator()
+                    ? const CircularProgressIndicator()
                     : ClipOval(
                   child: Image.memory(Uint8List.fromList(widget._imageData as List<int>), fit: BoxFit.fill,),
                 ),
@@ -180,7 +180,7 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
                 Column(
                   children: [
-                    // profile image + navigate to edit page
+                    // profile image
                     Stack(
                       alignment: Alignment.bottomRight,
                       children: [
@@ -191,7 +191,7 @@ class _ProfileViewState extends State<ProfileView> {
                             shape: BoxShape.circle,
                           ),
                           child: widget._imageData == null
-                              ? CircularProgressIndicator()
+                              ? const CircularProgressIndicator()
                               : ClipOval(
                                   child: Image.memory(Uint8List.fromList(widget._imageData as List<int>), fit: BoxFit.fill,),
                                 ),
@@ -319,129 +319,13 @@ class _ProfileViewState extends State<ProfileView> {
                       children: [
                         const SizedBox(width: 5,),
                         // button: show my maps
-                        InkWell(
-                          splashColor: Colors.transparent,
-                          onTap: () {
-                            setState(() {
-                              toggleContainerVisibility('myMaps');
-                            });
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: 80,
-                            height: 45,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: GlobalColors.mainColor,
-                                width: 2,
-                              ),
-                              color: Colors.white,
-                            ),
-                            child: Text(
-                              'My Maps',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: GlobalColors.mainColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
+                        showProfileInfo('myMap'),
                         // button: show my solutions
-                        InkWell(
-                          splashColor: Colors.transparent,
-                          onTap: () {
-                            setState(() {
-                              toggleContainerVisibility('mySolutions');
-                            });
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: 80,
-                            height: 45,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: GlobalColors.mainColor,
-                                width: 2,
-                              ),
-                              color: Colors.white,
-                            ),
-                            child: Text(
-                              'My Solutions',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: GlobalColors.mainColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
+                        showProfileInfo('mySolutions'),
                         // button: show liked maps
-                        InkWell(
-                          splashColor: Colors.transparent,
-                          onTap: () {
-                            setState(() {
-                              toggleContainerVisibility('likedMaps');
-                            });
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: 80,
-                            height: 45,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: GlobalColors.mainColor,
-                                width: 2,
-                              ),
-                              color: Colors.white,
-                            ),
-                            child: Text(
-                              'Liked Maps',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: GlobalColors.mainColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
+                        showProfileInfo('likedMaps'),
                         // button: show liked solutions
-                        InkWell(
-                          splashColor: Colors.transparent,
-                          onTap: () {
-                            setState(() {
-                              toggleContainerVisibility('likedSolutions');
-                            });
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: 80,
-                            height: 45,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: GlobalColors.mainColor,
-                                width: 2,
-                              ),
-                              color: Colors.white,
-                            ),
-                            child: Text(
-                              'Liked Solutions',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: GlobalColors.mainColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
+                        showProfileInfo('likedSolutions'),
                         const SizedBox(width: 10,),
                       ],
                     ),
@@ -471,17 +355,13 @@ class _ProfileViewState extends State<ProfileView> {
                               FutureBuilder<List<MapData>?>(
                                 future: getMyMapData(widget.user.userId),
                                 builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    // While data is still loading
+                                  if (snapshot.connectionState == ConnectionState.waiting) { // While data is still loading
                                     return const CircularProgressIndicator();
-                                  } else if (snapshot.hasError) {
-                                    // If there's an error
+                                  } else if (snapshot.hasError) { // If there's an error
                                     return Text("Error: ${snapshot.error}");
-                                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                    // If data is empty or null
+                                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) { // If data is empty or null
                                     return const Text("No data available.");
-                                  } else {
-                                    // If data is available
+                                  } else { // If data is available
                                     widget.MyMaps = snapshot.data!;
                                     return ListView.builder(
                                       shrinkWrap: true,
@@ -541,16 +421,12 @@ class _ProfileViewState extends State<ProfileView> {
                                 future: getAchievedMapData(widget.user.userId),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState == ConnectionState.waiting) {
-                                    // While data is still loading
                                     return const CircularProgressIndicator();
                                   } else if (snapshot.hasError) {
-                                    // If there's an error
                                     return Text("Error: ${snapshot.error}");
                                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                    // If data is empty or null
                                     return const Text("No data available.");
                                   } else {
-                                    // If data is available
                                     widget.solutions = snapshot.data!;
                                     return ListView.builder(
                                       shrinkWrap: true,
@@ -604,16 +480,12 @@ class _ProfileViewState extends State<ProfileView> {
                                 future: getLikedMapData(widget.user.userId),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState == ConnectionState.waiting) {
-                                    // While data is still loading
                                     return const CircularProgressIndicator();
                                   } else if (snapshot.hasError) {
-                                    // If there's an error
                                     return Text("Error: ${snapshot.error}");
                                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                    // If data is empty or null
                                     return const Text("No data available.");
                                   } else {
-                                    // If data is available
                                     widget.likedMaps = snapshot.data!;
                                     return ListView.builder(
                                       shrinkWrap: true,
@@ -673,16 +545,12 @@ class _ProfileViewState extends State<ProfileView> {
                                 future: getLikedSolutionData(widget.user.userId),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState == ConnectionState.waiting) {
-                                    // While data is still loading
                                     return const CircularProgressIndicator();
                                   } else if (snapshot.hasError) {
-                                    // If there's an error
                                     return Text("Error: ${snapshot.error}");
                                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                    // If data is empty or null
                                     return const Text("No data available.");
                                   } else {
-                                    // If data is available
                                     widget.likedSolutions = snapshot.data!;
                                     return ListView.builder(
                                       shrinkWrap: true,
@@ -872,6 +740,58 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
+  Future<void> fetchImageData() async {
+    // set cookie
+    headers['cookie'] = "x_auth=${widget.authToken}";
+
+    try {
+      final response = await http.get(Uri.parse('http://143.248.225.53:8000/api/users/profileImage/${widget.user.userId}'), headers: headers);
+      if (response.statusCode == 200) {
+        setState(() {
+          widget._imageData = response.bodyBytes;
+        });
+      } else {
+        print('Failed to load image');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> sendImageData() async {
+    try {
+      var request = http.MultipartRequest(
+        'PATCH',
+        Uri.parse('http://143.248.225.53:8000/api/users/profileImage'),
+      );
+
+      request.files.add(http.MultipartFile.fromBytes(
+        'profileImage',
+        widget._imageData!,
+        filename: 'image.jpg',
+        contentType: MediaType('image', 'jpeg'),
+      ));
+
+      // set cookie
+      request.headers['cookie'] = "x_auth=${widget.authToken}";
+
+      var response = await request.send();
+      var responseData = await http.Response.fromStream(response);
+
+      if (response.statusCode == 200) {
+        print('Successfully uploaded the image');
+        return json.decode(responseData.body);
+      } else {
+        print('Failed to upload image. Status code: ${response.statusCode}');
+        print(responseData.body);
+        throw Exception('Failed to upload image');
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+      throw Exception('Error uploading image');
+    }
+  }
+
   Future<void> logout() async{
     // set cookie
     headers['cookie'] = "x_auth=${widget.authToken}";
@@ -916,59 +836,36 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
-  Future<void> fetchImageData() async {
-    // set cookie
-    headers['cookie'] = "x_auth=${widget.authToken}";
-
-    try {
-      final response = await http.get(Uri.parse('http://143.248.225.53:8000/api/users/profileImage/${widget.user.userId}'), headers: headers);
-      if (response.statusCode == 200) {
+  showProfileInfo(String visibility){
+    return InkWell(
+      splashColor: Colors.transparent,
+      onTap: () {
         setState(() {
-          widget._imageData = response.bodyBytes;
+          toggleContainerVisibility(visibility);
         });
-      } else {
-        print('Failed to load image');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-  Future<void> sendImageData() async {
-    try {
-      var request = http.MultipartRequest(
-        'PATCH',
-        Uri.parse('http://143.248.225.53:8000/api/users/profileImage'),
-      );
-
-      // Add the image data as a file part
-      request.files.add(http.MultipartFile.fromBytes(
-        'profileImage',
-        widget._imageData!,
-        filename: 'image.jpg',
-        contentType: MediaType('image', 'jpeg'),
-      ));
-
-      // set cookie
-      request.headers['cookie'] = "x_auth=${widget.authToken}";
-
-      // Send the request
-      var response = await request.send();
-
-      // Read response
-      var responseData = await http.Response.fromStream(response);
-
-      if (response.statusCode == 200) {
-        print('Successfully uploaded the image');
-        return json.decode(responseData.body);
-      } else {
-        print('Failed to upload image. Status code: ${response.statusCode}');
-        print(responseData.body);
-        throw Exception('Failed to upload image');
-      }
-    } catch (e) {
-      print('Error uploading image: $e');
-      throw Exception('Error uploading image');
-    }
+      },
+      child: Container(
+        alignment: Alignment.center,
+        width: 80,
+        height: 45,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: GlobalColors.mainColor,
+            width: 2,
+          ),
+          color: Colors.white,
+        ),
+        child: Text(
+          visibility,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: GlobalColors.mainColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
   }
 }

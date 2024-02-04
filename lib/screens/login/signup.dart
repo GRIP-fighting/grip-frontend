@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:madcamp_week4/screens/login/login.dart';
-import 'package:madcamp_week4/widgets/global_button.dart';
-import '../../utils/global_colors.dart';
+
+import '../../util/global_colors.dart';
+import '../../widgets/global_button.dart';
 import '../../widgets/global_text_form.dart';
 
 class Signup extends StatelessWidget{
@@ -71,7 +69,7 @@ class Signup extends StatelessWidget{
                 ),
                 const SizedBox(height: 10),
                 SignupButton(getName: () => nameText, getEmail: () => emailText, getPassword: () => passwordText, role: 0),
-                BackToLogin(),
+                const BackToLogin(),
               ]
             ),
           ),

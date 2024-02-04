@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:madcamp_week4/screens/login/login.dart';
-import 'package:madcamp_week4/utils/global_colors.dart';
+
+import '../util/global_colors.dart';
+import 'login/login.dart';
 
 class SplashView extends StatelessWidget{
   const SplashView({Key? key}) : super(key: key);
