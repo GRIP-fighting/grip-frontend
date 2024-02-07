@@ -119,7 +119,7 @@ class _MapDetailViewState extends State<MapDetailView> {
       headers['cookie'] = "x_auth=${widget.authToken}";
 
       final response = await http.patch(
-        Uri.parse('http://34.201.113.146:8000/api/maps/$mapId/liked'),
+        Uri.parse('http://13.125.42.66:8000/api/maps/$mapId/liked'),
         headers: headers,
       );
 

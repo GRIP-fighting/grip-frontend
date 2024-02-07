@@ -107,7 +107,7 @@ class _LoginButtonState extends State<LoginButton> {
     String jsonString = jsonEncode(data);
     print('Login Data: $jsonString');
     try {
-      final response = await http.post(Uri.parse('http://34.201.113.146:8000/api/users/login'),
+      final response = await http.post(Uri.parse('http://13.125.42.66:8000/api/users/login'),
           headers: {"Content-Type": "application/json"}, body: jsonString);
       print("Response status code: ${response.statusCode}");
       print("Response body for login data: ${response.body}");

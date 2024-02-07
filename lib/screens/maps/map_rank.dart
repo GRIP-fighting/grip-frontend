@@ -176,7 +176,7 @@ class _MapRankViewState extends State<MapRankView> {
     headers['cookie'] = "x_auth=${widget.authToken}";
 
     try {
-      final response = await http.get(Uri.parse('http://34.201.113.146:8000/api/maps'), headers: headers);
+      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/maps'), headers: headers);
       print("getMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {

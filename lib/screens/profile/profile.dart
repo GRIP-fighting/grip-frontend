@@ -609,7 +609,7 @@ class _ProfileViewState extends State<ProfileView> {
     headers['cookie'] = "x_auth=${widget.authToken}";
 
     try {
-      final response = await http.get(Uri.parse('http://34.201.113.146:8000/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
       print("getMyMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -640,7 +640,7 @@ class _ProfileViewState extends State<ProfileView> {
     headers['cookie'] = "x_auth=${widget.authToken}";
 
     try {
-      final response = await http.get(Uri.parse('http://34.201.113.146:8000/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
       print("getAchievedMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -671,7 +671,7 @@ class _ProfileViewState extends State<ProfileView> {
     headers['cookie'] = "x_auth=${widget.authToken}";
 
     try {
-      final response = await http.get(Uri.parse('http://34.201.113.146:8000/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
       print("getLikedMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -702,7 +702,7 @@ class _ProfileViewState extends State<ProfileView> {
     headers['cookie'] = "x_auth=${widget.authToken}";
 
     try {
-      final response = await http.get(Uri.parse('http://34.201.113.146:8000/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
       print("getLikedSolutionData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -745,7 +745,7 @@ class _ProfileViewState extends State<ProfileView> {
     headers['cookie'] = "x_auth=${widget.authToken}";
 
     try {
-      final response = await http.get(Uri.parse('http://34.201.113.146:8000/api/users/profileImage/${widget.user.userId}'), headers: headers);
+      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/profileImage/${widget.user.userId}'), headers: headers);
       if (response.statusCode == 200) {
         setState(() {
           widget._imageData = response.bodyBytes;
@@ -762,7 +762,7 @@ class _ProfileViewState extends State<ProfileView> {
     try {
       var request = http.MultipartRequest(
         'PATCH',
-        Uri.parse('http://34.201.113.146:8000/api/users/profileImage'),
+        Uri.parse('http://13.125.42.66:8000/api/users/profileImage'),
       );
 
       request.files.add(http.MultipartFile.fromBytes(
@@ -797,7 +797,7 @@ class _ProfileViewState extends State<ProfileView> {
     headers['cookie'] = "x_auth=${widget.authToken}";
 
     try {
-      final response = await http.get(Uri.parse('http://34.201.113.146:8000/api/users/logout'), headers: headers);
+      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/logout'), headers: headers);
       print("Logout Response body: ${response.body}");
 
       if (response.statusCode == 200) {
