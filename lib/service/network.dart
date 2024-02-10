@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 import '../models/global_data.dart';
 import '../screens/login/login.dart';
@@ -196,7 +198,56 @@ class Network {
     }
   }
 
+  Future<Uint8List?> fetchImageData(int userId) async {
+    // set cookie
+    headers['cookie'] = "x_auth=$authToken";
 
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/api/users/profileImage/$userId'), headers: headers);
+      if (response.statusCode == 200) {
+        return response.bodyBytes;
+      } else {
+        print('Failed to load image');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  Future<void> sendImageData(Uint8List imageData) async {
+    try {
+      var request = http.MultipartRequest(
+        'PATCH',
+        Uri.parse('$baseUrl/api/users/profileImage'),
+      );
+
+      request.files.add(http.MultipartFile.fromBytes(
+        'profileImage',
+        imageData,
+        filename: 'image.jpg',
+        contentType: MediaType('image', 'jpeg'),
+      ));
+
+      // set cookie
+      request.headers['cookie'] = "x_auth=$authToken";
+
+      var response = await request.send();
+      var responseData = await http.Response.fromStream(response);
+
+      if (response.statusCode == 200) {
+        print('Successfully uploaded the image');
+      } else {
+        print('Failed to upload image. Status code: ${response.statusCode}');
+        print(responseData.body);
+        throw Exception('Failed to upload image');
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+      throw Exception('Error uploading image');
+    }
+  }
 
   Future<void> logout() async{
     // set cookie

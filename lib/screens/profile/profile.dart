@@ -1,14 +1,11 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
-import 'package:http_parser/http_parser.dart';
-import 'package:madcamp_week4/service/network.dart';
 
+import 'package:madcamp_week4/service/network.dart';
 import '../../models/global_data.dart';
 import '../../util/global_colors.dart';
 import '../maps/map_detail.dart';
@@ -74,14 +71,23 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void initState() {
     super.initState();
-    fetchImageData();
+    Network network = Network(authToken: widget.authToken);
+    network.fetchImageData(widget.user.userId).then((imageData) {
+      setState(() {
+        widget._imageData = imageData;
+      });
+    }).catchError((error) {
+      // 에러가 발생한 경우 처리
+      print('Error fetching image data: $error');
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
     Network network = Network(authToken: widget.authToken);
     if(widget._imageData == null){ // image 깜빡거림 해결
-      fetchImageData();
+      network.fetchImageData(widget.user.userId);
     }
 
     return Scaffold(
@@ -612,60 +618,9 @@ class _ProfileViewState extends State<ProfileView> {
 
       setState(() {
         widget._imageData = imageData as Uint8List?;
-        sendImageData();
+        Network network = Network(authToken: widget.authToken);
+        network.sendImageData(widget._imageData!);
       });
-    }
-  }
-
-  Future<void> fetchImageData() async {
-    // set cookie
-    headers['cookie'] = "x_auth=${widget.authToken}";
-
-    try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/profileImage/${widget.user.userId}'), headers: headers);
-      if (response.statusCode == 200) {
-        setState(() {
-          widget._imageData = response.bodyBytes;
-        });
-      } else {
-        print('Failed to load image');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-  Future<void> sendImageData() async {
-    try {
-      var request = http.MultipartRequest(
-        'PATCH',
-        Uri.parse('http://13.125.42.66:8000/api/users/profileImage'),
-      );
-
-      request.files.add(http.MultipartFile.fromBytes(
-        'profileImage',
-        widget._imageData!,
-        filename: 'image.jpg',
-        contentType: MediaType('image', 'jpeg'),
-      ));
-
-      // set cookie
-      request.headers['cookie'] = "x_auth=${widget.authToken}";
-
-      var response = await request.send();
-      var responseData = await http.Response.fromStream(response);
-
-      if (response.statusCode == 200) {
-        print('Successfully uploaded the image');
-        return json.decode(responseData.body);
-      } else {
-        print('Failed to upload image. Status code: ${response.statusCode}');
-        print(responseData.body);
-        throw Exception('Failed to upload image');
-      }
-    } catch (e) {
-      print('Error uploading image: $e');
-      throw Exception('Error uploading image');
     }
   }
 
