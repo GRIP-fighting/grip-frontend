@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:madcamp_week4/service/network.dart';
 
 import '../../models/global_data.dart';
 import '../../util/global_colors.dart';
@@ -21,11 +20,10 @@ class MapRankView extends StatefulWidget{
 class _MapRankViewState extends State<MapRankView> {
   late List<MapRankingData> maps;
 
-  // for auth
-  Map<String, String> headers = {};
-
   @override
   Widget build(BuildContext context) {
+    Network network = Network(authToken: widget.authToken);
+
     return Scaffold(
       backgroundColor: GlobalColors.mainColor,
       appBar: AppBar(
@@ -79,7 +77,7 @@ class _MapRankViewState extends State<MapRankView> {
                           ),
                           const SizedBox(height: 20,),
                           FutureBuilder<List<MapRankingData>?>(
-                            future: getMapData(),
+                            future: network.getMapData(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const CircularProgressIndicator();
@@ -119,7 +117,7 @@ class _MapRankViewState extends State<MapRankView> {
                                                       print('result: $result');
                                                   if (result != null && result is bool) {
                                                     setState(() {
-                                                      getMapData();
+                                                      network.getMapData();
                                                     });
                                                   }
                                                 },
@@ -169,35 +167,6 @@ class _MapRankViewState extends State<MapRankView> {
         ),
       ),
     );
-  }
-
-  Future<List<MapRankingData>?> getMapData() async {
-    // set cookie
-    headers['cookie'] = "x_auth=${widget.authToken}";
-
-    try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/maps'), headers: headers);
-      print("getMapData Response body: ${response.body}");
-
-      if (response.statusCode == 200) {
-        dynamic responseBody = json.decode(response.body);
-
-        if (responseBody is Map && responseBody.containsKey('maps')) {
-          List<MapRankingData> maps = (responseBody['maps'] as List).map((json) => MapRankingData.fromJson(json)).toList();
-          print('getMapData solutions: $maps');
-          return maps;
-        } else {
-          print("getMapData Error - Unexpected response format");
-          return null;
-        }
-      } else {
-        print("getMapData Error - Status Code: ${response.statusCode}");
-        return null;
-      }
-    } catch (e) {
-      print("getMapData Error: $e");
-      return null;
-    }
   }
 }
 

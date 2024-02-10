@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:madcamp_week4/screens/users/user_detail.dart';
+import 'package:madcamp_week4/service/network.dart';
 
 import '../../models/global_data.dart';
 import '../../util/global_colors.dart';
@@ -18,6 +19,8 @@ class UserRankView extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    Network network = Network(authToken: authToken);
+
     return Scaffold(
       backgroundColor: GlobalColors.mainColor,
       appBar: AppBar(
@@ -57,7 +60,7 @@ class UserRankView extends StatelessWidget{
                       children: [
                         const SizedBox(height: 10,),
                         FutureBuilder<List<UserRankingData>?> (
-                          future: getUserData(),
+                          future: network.getUserData(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
                               return const CircularProgressIndicator();
@@ -93,7 +96,7 @@ class UserRankView extends StatelessWidget{
                                   child: ListTile(
                                       leading: FutureBuilder<String>(
 
-                                        future: getUserImageUrl(user.userId), // 사용자의 이미지 URL을 가져오는 비동기 함수
+                                        future: network.getUserImageUrl(user.userId), // 사용자의 이미지 URL을 가져오는 비동기 함수
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState == ConnectionState.waiting) {
                                             // 데이터를 기다리는 동안 로딩 표시자를 보여줌
@@ -137,51 +140,5 @@ class UserRankView extends StatelessWidget{
       ),
     );
   }
-  Future<String> getUserImageUrl(int userId) async {
-    final String apiUrl = "http://143.248.225.53:8000/api/users/$userId"; // 사용자 이미지 URL을 가져오는 API 엔드포인트
 
-    try {
-      print(apiUrl);
-      final response = await http.get(Uri.parse(apiUrl));
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        String imageUrl = responseData['imageUrl']; // 서버 응답에서 이미지 URL을 추출
-        print(imageUrl);
-        return imageUrl;
-      }
-      print('Failed to load image URL: ${response.statusCode}');
-      return '';
-    } catch (e) {
-      print('Error fetching user image URL: $e');
-      return ''; // 기본 이미지 URL을 반환
-    }
-  }
-  Future<List<UserRankingData>?> getUserData() async {
-    // set cookie
-    headers['cookie'] = "x_auth=$authToken";
-
-    try {
-      final response = await http.get(Uri.parse('http://143.248.225.53:8000/api/users'), headers: headers);
-      print("getUserData Response body: ${response.body}");
-
-      if (response.statusCode == 200) {
-        dynamic responseBody = json.decode(response.body);
-
-        if (responseBody is Map && responseBody.containsKey('users')) {
-          List<UserRankingData> users = (responseBody['users'] as List).map((json) => UserRankingData.fromJson(json)).toList();
-          print('getUserData: $users');
-          return users;
-        } else {
-          print("getUserData Error - Unexpected response format");
-          return null;
-        }
-      } else {
-        print("getUserData Error - Status Code: ${response.statusCode}");
-        return null;
-      }
-    } catch (e) {
-      print("getUserData Error: $e");
-      return null;
-    }
-  }
 }

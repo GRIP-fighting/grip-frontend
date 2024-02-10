@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:http/http.dart' as http;
 
 import '../../models/global_data.dart';
 import '../../util/global_colors.dart';
+import '../../service/network.dart';
 
 class MapDetailView extends StatefulWidget{
   MapDetailView({Key? key, required this.authToken, required this.map, required this.user}) : super(key: key);
@@ -23,6 +23,7 @@ class _MapDetailViewState extends State<MapDetailView> {
   @override
   Widget build(BuildContext context) {
     bool isLiked = widget.map.likedUserId.contains(widget.user.userId);
+    Network network = Network(authToken: widget.authToken);
 
     return Scaffold(
       appBar: AppBar(
@@ -38,7 +39,7 @@ class _MapDetailViewState extends State<MapDetailView> {
               onPressed: () async {
                 setState(() {
                   isLiked = !isLiked;
-                  updateLikedStatus(widget.map.mapId);
+                  network.updateLikedStatus(widget.map.mapId);
                 });
 
               },
@@ -112,31 +113,5 @@ class _MapDetailViewState extends State<MapDetailView> {
         ),
       ),
     );
-  }
-
-  Future<void> updateLikedStatus(int mapId) async {
-    try {
-      headers['cookie'] = "x_auth=${widget.authToken}";
-
-      final response = await http.patch(
-        Uri.parse('http://13.125.42.66:8000/api/maps/$mapId/liked'),
-        headers: headers,
-      );
-
-      print('updateLike response: ${response.body}');
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        print('Liked status updated successfully');
-
-        setState(() {
-          widget.map.likedUserId.contains(widget.user.userId)
-              ? widget.map.likedUserId.remove(widget.user.userId)
-              : widget.map.likedUserId.add(widget.user.userId);
-        });
-      } else {
-        print('Error updating liked status. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error updating liked status: $e');
-    }
   }
 }

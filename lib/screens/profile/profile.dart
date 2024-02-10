@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'package:http_parser/http_parser.dart';
+import 'package:madcamp_week4/service/network.dart';
 
 import '../../models/global_data.dart';
 import '../../util/global_colors.dart';
-import '../login/login.dart';
 import '../maps/map_detail.dart';
 
 
@@ -79,6 +79,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    Network network = Network(authToken: widget.authToken);
     if(widget._imageData == null){ // image 깜빡거림 해결
       fetchImageData();
     }
@@ -134,7 +135,7 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
               ),
               onTap:(){
-                logout();
+                network.logout();
               }
             ),
             ListTile(
@@ -150,7 +151,7 @@ class _ProfileViewState extends State<ProfileView> {
                   ),
                 ),
                 onTap:(){
-                  deleteAccount();
+                  network.deleteAccount();
                 }
             ),
           ],
@@ -353,7 +354,7 @@ class _ProfileViewState extends State<ProfileView> {
                               ),
                               const SizedBox(height: 10,),
                               FutureBuilder<List<MapData>?>(
-                                future: getMyMapData(widget.user.userId),
+                                future: network.getMyMapData(widget.user.userId),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState == ConnectionState.waiting) { // While data is still loading
                                     return const CircularProgressIndicator();
@@ -418,7 +419,7 @@ class _ProfileViewState extends State<ProfileView> {
                               ),
                               const SizedBox(height: 10,),
                               FutureBuilder<List<Solution>?>(
-                                future: getAchievedMapData(widget.user.userId),
+                                future: network.getAchievedMapData(widget.user.userId),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState == ConnectionState.waiting) {
                                     return const CircularProgressIndicator();
@@ -477,7 +478,7 @@ class _ProfileViewState extends State<ProfileView> {
                               ),
                               const SizedBox(height: 10,),
                               FutureBuilder<List<LikedMap>?>(
-                                future: getLikedMapData(widget.user.userId),
+                                future: network.getLikedMapData(widget.user.userId),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState == ConnectionState.waiting) {
                                     return const CircularProgressIndicator();
@@ -542,7 +543,7 @@ class _ProfileViewState extends State<ProfileView> {
                               ),
                               const SizedBox(height: 10,),
                               FutureBuilder<List<LikedSolution>?>(
-                                future: getLikedSolutionData(widget.user.userId),
+                                future: network.getLikedSolutionData(widget.user.userId),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState == ConnectionState.waiting) {
                                     return const CircularProgressIndicator();
@@ -600,130 +601,6 @@ class _ProfileViewState extends State<ProfileView> {
       // set visibility
       containerVisibility[containerKey] = !containerVisibility[containerKey]!;
     });
-  }
-
-  Future<List<MapData>?> getMyMapData(int id) async {
-    String userId = jsonEncode(id);
-
-    // set cookie
-    headers['cookie'] = "x_auth=${widget.authToken}";
-
-    try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
-      print("getMyMapData Response body: ${response.body}");
-
-      if (response.statusCode == 200) {
-        dynamic responseBody = json.decode(response.body);
-
-        if (responseBody is Map && responseBody.containsKey('maps')) {
-          List<MapData> maps = (responseBody['maps'] as List).map((json) => MapData.fromJson(json)).toList();
-          print('getMyMapData solutions: $maps');
-          return maps;
-        } else {
-          print("getMyMapData Error - Unexpected response format");
-          return null;
-        }
-      } else {
-        print("getMyMapData Error - Status Code: ${response.statusCode}");
-        return null;
-      }
-    } catch (e) {
-      print("getMyMapData Error: $e");
-      return null;
-    }
-  }
-
-  Future<List<Solution>?> getAchievedMapData(int id) async {
-    String userId = jsonEncode(id);
-
-    // set cookie
-    headers['cookie'] = "x_auth=${widget.authToken}";
-
-    try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
-      print("getAchievedMapData Response body: ${response.body}");
-
-      if (response.statusCode == 200) {
-        dynamic responseBody = json.decode(response.body);
-
-        if (responseBody is Map && responseBody.containsKey('solutions')) {
-          List<Solution> solutions = (responseBody['solutions'] as List).map((json) => Solution.fromJson(json)).toList();
-          print('getAchievedMapData solutions: $solutions');
-          return solutions;
-        } else {
-          print("getAchievedMapData Error - Unexpected response format");
-          return null;
-        }
-      } else {
-        print("getAchievedMapData Error - Status Code: ${response.statusCode}");
-        return null;
-      }
-    } catch (e) {
-      print("getAchievedMapData Error: $e");
-      return null;
-    }
-  }
-
-  Future<List<LikedMap>?> getLikedMapData(int id) async {
-    String userId = jsonEncode(id);
-
-    // set cookie
-    headers['cookie'] = "x_auth=${widget.authToken}";
-
-    try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
-      print("getLikedMapData Response body: ${response.body}");
-
-      if (response.statusCode == 200) {
-        dynamic responseBody = json.decode(response.body);
-
-        if (responseBody is Map && responseBody.containsKey('likedMaps')) {
-          List<LikedMap> likedMaps = (responseBody['likedMaps'] as List).map((json) => LikedMap.fromJson(json)).toList();
-          print('getLikedMapData: $likedMaps');
-          return likedMaps;
-        } else {
-          print("geLikedMapData Error - Unexpected response format");
-          return null;
-        }
-      } else {
-        print("getLikedMapData Error - Status Code: ${response.statusCode}");
-        return null;
-      }
-    } catch (e) {
-      print("getLikedMapData Error: $e");
-      return null;
-    }
-  }
-
-  Future<List<LikedSolution>?> getLikedSolutionData(int id) async {
-    String userId = jsonEncode(id);
-
-    // set cookie
-    headers['cookie'] = "x_auth=${widget.authToken}";
-
-    try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
-      print("getLikedSolutionData Response body: ${response.body}");
-
-      if (response.statusCode == 200) {
-        dynamic responseBody = json.decode(response.body);
-
-        if (responseBody is Map && responseBody.containsKey('likedSolutions')) {
-          List<LikedSolution> likedSolutions = (responseBody['likedSolutions'] as List).map((json) => LikedSolution.fromJson(json)).toList();
-          print('getLikedSolutionData: $likedSolutions');
-          return likedSolutions;
-        } else {
-          print("geLikedSolutionData Error - Unexpected response format");
-          return null;
-        }
-      } else {
-        print("getLikedSolutionData Error - Status Code: ${response.statusCode}");
-        return null;
-      }
-    } catch (e) {
-      print("getLikedSolutionData Error: $e");
-      return null;
-    }
   }
 
   Future getImage(ImageSource source) async {
@@ -789,50 +666,6 @@ class _ProfileViewState extends State<ProfileView> {
     } catch (e) {
       print('Error uploading image: $e');
       throw Exception('Error uploading image');
-    }
-  }
-
-  Future<void> logout() async{
-    // set cookie
-    headers['cookie'] = "x_auth=${widget.authToken}";
-
-    try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/logout'), headers: headers);
-      print("Logout Response body: ${response.body}");
-
-      if (response.statusCode == 200) {
-        dynamic responseBody = json.decode(response.body);
-
-        if (responseBody is Map && responseBody.containsKey('success')) {
-          if(responseBody['success']){
-            Get.to(() => LoginView());
-          }
-        } else {
-          print("Logout Error - Unexpected response format");
-        }
-      } else {
-        print("Logout Error - Status Code: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("Logout Error: $e");
-    }
-  }
-
-  Future<void> deleteAccount() async{
-    // set cookie
-    headers['cookie'] = "x_auth=${widget.authToken}";
-
-    try {
-      final response = await http.delete(Uri.parse('http://143.248.225.53:8000/api/users/'), headers: headers);
-      print("Deleting Response body: ${response.body}");
-
-      if (response.statusCode == 200) {
-            Get.to(() => LoginView());
-      } else {
-        print("Deleting Error - Status Code: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("Deleting Error: $e");
     }
   }
 
