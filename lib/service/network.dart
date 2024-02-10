@@ -11,7 +11,7 @@ import '../screens/login/login.dart';
 
 class Network {
   Network({required this.authToken});
-  final baseUrl = "http://13.125.42.66:8000";
+  final baseUrl = "http://13.125.42.66:8000/api";
   final String authToken;
 
   Map<String, String> headers = {};
@@ -22,7 +22,7 @@ class Network {
       headers['cookie'] = "x_auth=$authToken";
 
       final response = await http.patch(
-        Uri.parse('$baseUrl/api/maps/$mapId/liked'),
+        Uri.parse('$baseUrl/maps/$mapId/liked'),
         headers: headers,
       );
 
@@ -49,7 +49,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/maps'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/maps'), headers: headers);
       print("getMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -81,7 +81,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/users/$userId'), headers: headers);
       print("getMyMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -112,7 +112,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/users/$userId'), headers: headers);
       print("getAchievedMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -143,7 +143,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/users/$userId'), headers: headers);
       print("getLikedMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -174,7 +174,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/users/$userId'), headers: headers);
       print("getLikedSolutionData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -203,7 +203,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/users/profileImage/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/users/profileImage/$userId'), headers: headers);
       if (response.statusCode == 200) {
         return response.bodyBytes;
       } else {
@@ -220,7 +220,7 @@ class Network {
     try {
       var request = http.MultipartRequest(
         'PATCH',
-        Uri.parse('$baseUrl/api/users/profileImage'),
+        Uri.parse('$baseUrl/users/profileImage'),
       );
 
       request.files.add(http.MultipartFile.fromBytes(
@@ -254,7 +254,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/users/logout'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/users/logout'), headers: headers);
       print("Logout Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -280,7 +280,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.delete(Uri.parse('$baseUrl/api/users/'), headers: headers);
+      final response = await http.delete(Uri.parse('$baseUrl/users/'), headers: headers);
       print("Deleting Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -295,14 +295,14 @@ class Network {
 
   // for user_rank.dart
   Future<String> getUserImageUrl(int userId) async {
-    final String apiUrl = "$baseUrl/api/users/$userId"; // 사용자 이미지 URL을 가져오는 API 엔드포인트
+    final String apiUrl = "$baseUrl/users/$userId";
 
     try {
       print(apiUrl);
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        String imageUrl = responseData['imageUrl']; // 서버 응답에서 이미지 URL을 추출
+        String imageUrl = responseData['imageUrl'];
         print(imageUrl);
         return imageUrl;
       }
@@ -310,7 +310,7 @@ class Network {
       return '';
     } catch (e) {
       print('Error fetching user image URL: $e');
-      return ''; // 기본 이미지 URL을 반환
+      return '';
     }
   }
   Future<List<UserRankingData>?> getUserData() async {
@@ -318,7 +318,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/users'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/users'), headers: headers);
       print("getUserData Response body: ${response.body}");
 
       if (response.statusCode == 200) {

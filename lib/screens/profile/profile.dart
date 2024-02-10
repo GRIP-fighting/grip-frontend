@@ -87,7 +87,14 @@ class _ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     Network network = Network(authToken: widget.authToken);
     if(widget._imageData == null){ // image 깜빡거림 해결
-      network.fetchImageData(widget.user.userId);
+      network.fetchImageData(widget.user.userId).then((imageData) {
+        setState(() {
+          widget._imageData = imageData;
+        });
+      }).catchError((error) {
+        // 에러가 발생한 경우 처리
+        print('Error fetching image data: $error');
+      });
     }
 
     return Scaffold(
