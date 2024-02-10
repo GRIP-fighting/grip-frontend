@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 
 import '../models/global_data.dart';
 import '../screens/login/login.dart';
@@ -21,7 +20,7 @@ class Network {
       headers['cookie'] = "x_auth=$authToken";
 
       final response = await http.patch(
-        Uri.parse('http://13.125.42.66:8000/api/maps/$mapId/liked'),
+        Uri.parse('$baseUrl/api/maps/$mapId/liked'),
         headers: headers,
       );
 
@@ -48,7 +47,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/maps'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/api/maps'), headers: headers);
       print("getMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -80,7 +79,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/api/users/$userId'), headers: headers);
       print("getMyMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -111,7 +110,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/api/users/$userId'), headers: headers);
       print("getAchievedMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -142,7 +141,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/api/users/$userId'), headers: headers);
       print("getLikedMapData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -173,7 +172,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/$userId'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/api/users/$userId'), headers: headers);
       print("getLikedSolutionData Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -204,7 +203,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('http://13.125.42.66:8000/api/users/logout'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/api/users/logout'), headers: headers);
       print("Logout Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -230,7 +229,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.delete(Uri.parse('http://143.248.225.53:8000/api/users/'), headers: headers);
+      final response = await http.delete(Uri.parse('$baseUrl/api/users/'), headers: headers);
       print("Deleting Response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -245,7 +244,7 @@ class Network {
 
   // for user_rank.dart
   Future<String> getUserImageUrl(int userId) async {
-    final String apiUrl = "http://143.248.225.53:8000/api/users/$userId"; // 사용자 이미지 URL을 가져오는 API 엔드포인트
+    final String apiUrl = "$baseUrl/api/users/$userId"; // 사용자 이미지 URL을 가져오는 API 엔드포인트
 
     try {
       print(apiUrl);
@@ -268,7 +267,7 @@ class Network {
     headers['cookie'] = "x_auth=$authToken";
 
     try {
-      final response = await http.get(Uri.parse('http://143.248.225.53:8000/api/users'), headers: headers);
+      final response = await http.get(Uri.parse('$baseUrl/api/users'), headers: headers);
       print("getUserData Response body: ${response.body}");
 
       if (response.statusCode == 200) {

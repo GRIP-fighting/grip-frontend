@@ -320,7 +320,7 @@ class _ProfileViewState extends State<ProfileView> {
                       children: [
                         const SizedBox(width: 5,),
                         // button: show my maps
-                        showProfileInfo('myMap'),
+                        showProfileInfo('myMaps'),
                         // button: show my solutions
                         showProfileInfo('mySolutions'),
                         // button: show liked maps
