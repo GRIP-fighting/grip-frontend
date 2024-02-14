@@ -37,9 +37,16 @@ class _MapDetailViewState extends State<MapDetailView> {
                   ? const Icon(Icons.favorite, color: Colors.red)
                   : const Icon(Icons.favorite_border),
               onPressed: () async {
-                setState(() {
+                setState(() async {
                   isLiked = !isLiked;
-                  network.updateLikedStatus(widget.map.mapId);
+                  bool isUpdated = await network.updateLikedStatus(widget.map.mapId);
+                  if(isUpdated){
+                    setState(() {
+                      widget.map.likedUserId.contains(widget.user.userId)
+                          ? widget.map.likedUserId.remove(widget.user.userId)
+                          : widget.map.likedUserId.add(widget.user.userId);
+                    });
+                  }
                 });
 
               },

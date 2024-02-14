@@ -17,7 +17,7 @@ class Network {
   Map<String, String> headers = {};
 
   // for map_detail.dart
-  Future<void> updateLikedStatus(int mapId) async {
+  Future<bool> updateLikedStatus(int mapId) async {
     try {
       headers['cookie'] = "x_auth=$authToken";
 
@@ -29,17 +29,14 @@ class Network {
       print('updateLike response: ${response.body}');
       if (response.statusCode >= 200 && response.statusCode < 300) {
         print('Liked status updated successfully');
-
-        // setState(() {
-        //   widget.map.likedUserId.contains(widget.user.userId)
-        //       ? widget.map.likedUserId.remove(widget.user.userId)
-        //       : widget.map.likedUserId.add(widget.user.userId);
-        // });
+        return true;
       } else {
         print('Error updating liked status. Status code: ${response.statusCode}');
+        return false;
       }
     } catch (e) {
       print('Error updating liked status: $e');
+      return false;
     }
   }
 
